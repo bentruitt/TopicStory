@@ -1,0 +1,5 @@
+*.swp
+*.pyc
+venv
+sql/conn.py
+crawler/logs

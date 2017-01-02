@@ -1,0 +1,33 @@
+Major Goals
+-----------
+- All: Merge separate projects into one
+    --> Use a single repository, with sub-modules/folders for each project
+    --> Use a single database
+    --> Would be useful for eliminating hassle of communicating between separate databases
+- All: Reorganize database queries
+    --> Return dictionaries instead of objects
+    --> Would be useful for simplifying queries, allowing for dynamic changes, less overhead, etc.
+- Crawler: Track sources
+    --> Add another (sources) table
+    --> Source name, Source base URL, id
+    --> Referenced in visits table (uses source, not base url)
+    --> would be useful for displaying recent articles
+- Website: display recent articles
+    --> Main page would have overview of count for last week for each source
+    --> Click a source to see all articles from last week, sorted by date
+    --> (optional) allow for custom dates
+    --> would be useful for getting a high-level overview of crawler, check running ok
+- Analysis: Topic Modeling
+    --> Load a week's worth of data into the corpus
+    --> Find major topics for that week
+    --> Tell how much each article corresponds to that topic
+    --> (optional) allow for custom dates
+- Analysis: Clustering
+    --> Cluster a week's worth of data
+    --> (optional) allow for customizing cluster size
+    --> (optional) allow for custom dates
+    --> would be useful for looking for major stories/groups of stories reported on multiple outlets
+- Website: Display Topic Modeling
+    --> Not sure how to do this yet
+- Website: Display Clustering
+    --> Not sure how to do this yet

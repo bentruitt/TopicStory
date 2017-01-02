@@ -1,0 +1,6 @@
+Automating the cron job
+-----------------------
+It turns out that running python inside venv/bin/python always runs with the correct virtual environment.
+To automate the run.py with a cron job, use the following:
+
+  0 0 * * * /path/to/project/venv/bin/python /path/to/project/run.py

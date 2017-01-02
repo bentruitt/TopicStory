@@ -1,0 +1,11 @@
+flask
+gensim
+gunicorn
+newspaper
+numpy
+pillow
+psutil
+psycopg2
+scipy
+sklearn
+uwsgi

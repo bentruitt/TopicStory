@@ -1,0 +1,7 @@
+Restarting the PSQL Server on Ubuntu
+------------------------------------
+
+Sometimes the PSQL server stops running.
+To restart, use the following command:
+
+  sudo /etc/init.d/postgresql restart

@@ -1,0 +1,31 @@
+Installing Dependencies With Low Amounts of RAM
+-----------------------------------------------
+
+When running `pip install` on the DO droplet, sometimes packages won't compile because of memory.
+The main error message is:
+
+  error: command 'x86_64-linux-gnu-gcc' failed with exit status 4
+
+This can be alleviated by adding swap space, and removing it when finished.
+To add swap space, run the following commands.
+  $ sudo dd if=/dev/zero of=/swapfile1 bs=1024 count=524288
+  $ sudo mkswap /swapfile1
+  $ sudo chown root:root /swapfile1
+  $ sudo chmod 0600 /swapfile1
+  $ sudo swapon /swapfile1
+
+Now that there is extra program memory available, the pip install should work.
+  $ pip install -r requirements.txt
+
+Once the dependencies are installed, the swap space can be removed.
+  $ sudo swapoff -v /swapfile1
+  $ sudo rm /swapfile1
+
+
+Another common memory error (from Python) is:
+  
+  MemoryError
+
+To fix this error, simply use the --no-cache-dir argument.
+
+  $ pip install --no-cache-dir -r requirements.txt

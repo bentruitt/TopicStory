@@ -1,0 +1,25 @@
+Setting up a Virtual Environment
+--------------------------------
+
+First, install python, pip, and virtualenv (if already installed, skip this step).
+$ sudo apt-get install python
+$ sudo apt-get install pip
+$ sudo pip install virtualenv
+
+Second, create a local virtual environment.
+$ virtualenv venv (or some other name)
+
+Third, activate the virtual environment.
+$ source venv/bin/activate
+(to deactivate the virtual environment)
+$ deactivate
+
+Fourth, create a requirements.txt file with the required dependencies (if already present, skip this step).
+$ vim requirements.txt
+    flask=0.11.1
+    gunicorn=19.6.0
+    etc.
+
+Fifth, install the requirements (make sure the virtaul environment is currently activated).
+$ pip install -r requirements.txt --upgrade
+(the upgrade is required to get the most recent version of pillow, otherwise it throws IOError's)
