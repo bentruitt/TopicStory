@@ -1,3 +1,7 @@
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+
 import time
 import threading
 import logging
@@ -12,7 +16,8 @@ import models.visits
 import models.articles
 import models.links
 import models.urls
-from config import MAX_CRAWL_TIME, TIME_BETWEEN_REQUESTS, connect
+from config import MAX_CRAWL_TIME, TIME_BETWEEN_REQUESTS
+from sql.conn import connect
 
 def crawl(base_url_string):
   conn = connect()
