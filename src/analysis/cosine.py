@@ -5,7 +5,7 @@ import sys
 
 import models.articles as ma
 import models.cosine_similarities as mcs
-from config import connect
+from conn import connect
 
 reload(sys)  
 sys.setdefaultencoding('utf8')

@@ -1,20 +1,23 @@
-import psycopg2
 import argparse
-import re
-import itertools
 
-from cosine import calculate_similarities
-import labels
-import cosine
+import crawler.crawler as crawler
+import analysis.labels as labels
+import analysis.cosine as cosine
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Interact with the crawler database')
+  parser.add_argument('--crawl', help='spawn a continuous crawler for a given base url', nargs=1)
   parser.add_argument('--label', help='create labels for all the built-in news sources', action='store_true')
   parser.add_argument('--cosine', help='create cosine similarities for all pairs of articles', action='store_true')
   args = parser.parse_args()
 
-  if args.label:
+  if args.crawl:
+    base_url = args.crawl[0]
+    crawler.crawl(base_url)
+
+  elif args.label:
     labels.add_labels()
 
   elif args.cosine:
     cosine.calculate_cosine_similarities()
+

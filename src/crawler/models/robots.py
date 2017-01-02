@@ -1,6 +1,6 @@
 import robotparser as rp
 
-import util
+from .. import util
 
 class Robots:
 

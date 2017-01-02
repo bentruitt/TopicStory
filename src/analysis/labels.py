@@ -2,7 +2,8 @@ import re
 
 import models.urls
 import models.article_labels
-from config import ARTICLE_URL_REGEXPS, connect
+from config import ARTICLE_URL_REGEXPS
+from conn import connect
 
 def add_labels():
   conn = connect()

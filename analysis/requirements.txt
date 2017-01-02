@@ -1,5 +1,0 @@
-psycopg2
-numpy
-scipy
-gensim
-sklearn
