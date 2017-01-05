@@ -4,7 +4,6 @@ import crawler.crawler as crawler
 import analysis.labels as labels
 import analysis.cosine as cosine
 import website.test_server as test_server
-import website.deploy_server as deploy_server
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Interact with the crawler database')
@@ -27,6 +26,3 @@ if __name__ == '__main__':
 
   elif args.test_server:
     test_server.run()
-
-  elif args.deploy_server:
-    deploy_server.run()
