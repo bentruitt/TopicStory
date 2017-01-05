@@ -1,0 +1,62 @@
+created news.ini file
+---------------------
+
+/home/scott/news/news.ini:
+
+    [uwsgi]
+    module = wsgi:app
+    
+    master = true
+    processes = 5
+    
+    socket = myproject.sock
+    chmod-socket = 660
+    vacuum = true
+    
+    die-on-term = true
+
+created systemd file
+--------------------
+
+/etc/systemd/system/news.service:
+
+    [Unit]
+    Description=uWSGI instance to serve news
+    After=network.target
+    
+    [Service]
+    User=scott
+    Group=www-data
+    WorkingDirectory=/home/scott/news
+    Environment="PATH=/home/scott/news/venv/bin"
+    ExecStart=/home/scott/news/venv/bin/uwsgi --ini news.ini
+    
+    [Install]
+    WantedBy=multi-user.target
+
+created nginx file
+------------------
+
+/etc/nginx/sites-available/news:
+
+    server {
+      listen 80;
+      server_name 104.131.191.240;
+    
+      location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/home/scott/news/news.sock;
+      }
+    }
+
+enabled nginx
+-------------
+
+sudo ln -s /etc/nginx/sites-available/news /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+sudo ufw allow 'Nginx Full
+
+restarting the server
+---------------------
+sudo systemctl restart news
