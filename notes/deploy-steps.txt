@@ -1,3 +1,7 @@
+Pretty much everything taken from this tutorial here:
+
+    https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-16-04
+
 created news.ini file
 ---------------------
 
@@ -9,11 +13,16 @@ created news.ini file
     master = true
     processes = 5
     
-    socket = myproject.sock
+    socket = news.sock
     chmod-socket = 660
     vacuum = true
     
     die-on-term = true
+
+Things to note:
+  - The *.ini file is responsible for actually calling the python code which starts the server.
+  - wsgi is the name of the file/module, app is the name of the a variable which starts the server with app.run().
+  - eg, wsgi.py would be the name of the python file, which contains the variable named app.
 
 created systemd file
 --------------------
@@ -27,12 +36,17 @@ created systemd file
     [Service]
     User=scott
     Group=www-data
-    WorkingDirectory=/home/scott/news
-    Environment="PATH=/home/scott/news/venv/bin"
-    ExecStart=/home/scott/news/venv/bin/uwsgi --ini news.ini
+    WorkingDirectory=/home/scott/news-app/src
+    Environment="PATH=/home/scott/news-app/venv/bin"
+    ExecStart=/home/scott/news-app/venv/bin/uwsgi --ini /home/scott/news-app/src/news.ini
     
     [Install]
     WantedBy=multi-user.target
+
+Things to note:
+  - The systemd file is responsible for starting processes automatically.
+  - The WorkingDirectory variable is equivalent to "cd /path/to/working/dir" and then running the script in ExecStart
+  - Important because Python uses the directory from which the script was called to determine the python path for imports.
 
 created nginx file
 ------------------
@@ -60,3 +74,7 @@ sudo ufw allow 'Nginx Full
 restarting the server
 ---------------------
 sudo systemctl restart news
+
+checking on systemd calls
+-------------------------
+sudo systemctl status news

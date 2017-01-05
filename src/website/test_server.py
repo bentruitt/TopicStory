@@ -1,4 +1,3 @@
 from website import app
 
-def run():
-  app.run(debug=True)
+# this script doesn't do anything, but `app` is called from news.ini to instantiate the server
