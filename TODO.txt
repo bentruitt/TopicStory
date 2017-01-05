@@ -1,9 +1,5 @@
 Major Goals
 -----------
-- All: Merge separate projects into one
-    --> Use a single repository, with sub-modules/folders for each project
-    --> Use a single database
-    --> Would be useful for eliminating hassle of communicating between separate databases
 - All: Reorganize database queries
     --> Return dictionaries instead of objects
     --> Would be useful for simplifying queries, allowing for dynamic changes, less overhead, etc.
