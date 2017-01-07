@@ -6,13 +6,13 @@ from config import ARTICLE_URL_REGEXPS
 from conn import connect
 
 def add_labels():
-  conn = connect()
+    conn = connect()
 
-  urls = models.urls.Urls(conn)
-  article_labels = models.article_labels.ArticleLabels(conn)
-  for base_url, regexp in ARTICLE_URL_REGEXPS:
-    source_urls = urls.internal_urls(base_url)
-    labels = [bool(re.search(regexp,u.url)) for u in source_urls]
-    article_labels.insert_many(source_urls,labels)
+    urls = models.urls.Urls(conn)
+    article_labels = models.article_labels.ArticleLabels(conn)
+    for base_url, regexp in ARTICLE_URL_REGEXPS:
+        source_urls = urls.internal_urls(base_url)
+        labels = [bool(re.search(regexp,u.url)) for u in source_urls]
+        article_labels.insert_many(source_urls,labels)
 
-  conn.close()
+    conn.close()

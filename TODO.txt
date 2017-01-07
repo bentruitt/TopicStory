@@ -27,3 +27,4 @@ Major Goals
     --> Not sure how to do this yet
 - Website: Display Clustering
     --> Not sure how to do this yet
+- All: Write a test suite
