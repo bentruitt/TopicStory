@@ -22,7 +22,7 @@ Articles for source {{ source }}
     </tr>
     {% for date in num_articles_by_date %}
     <tr>
-        <td>{{ date.publish_date }}</td>
+        <td><a href="/articles/source={{ source }}/date={{ date.publish_date }}">{{ date.publish_date }}</td>
         <td>{{ date.num_articles }}</td>
     </tr>
     {% endfor %}

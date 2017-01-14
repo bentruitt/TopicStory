@@ -41,7 +41,6 @@ class Articles:
             raise ValueError('By cannot be `date` when `publish_date` is provided.')
 
         # build base query
-        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         q_select = '''SELECT COUNT(*) AS num_articles '''
         q_from = '''FROM articles JOIN sources ON articles.source=sources.id '''
         q_where = '''''';
@@ -71,25 +70,30 @@ class Articles:
             q_group += '''GROUP BY publish_date'''
             q_order += '''ORDER BY publish_date DESC'''
 
-        # putting everything together
+        # query the server, return the result
         q = string.join([q_select, q_from, q_where, q_group, q_order, ';'], sep='\n')
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cursor.execute(q, tuple(query_args))
         if by is None:
             result = cursor.fetchone()['num_articles']
         else:
             result = cursor.fetchall()
         return result
-
-
-    def lookup_recent_articles(self, conn):
-        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    def retrieve_articles(self, source_name, publish_date):
         q = '''
-            SELECT sources.name, articles.title, urls.url
-                FROM urls
-                    JOIN articles ON urls.id=articles.url
-                    JOIN sources ON urls.
+            SELECT articles.title AS title, urls.url AS url
+            FROM articles
+            JOIN urls ON articles.url=urls.id
+            JOIN sources ON articles.source=sources.id
+            WHERE sources.name=%s
+              AND articles.date=%s
+            ORDER BY title ASC;
             '''
-        return None
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute(q, (source_name, publish_date))
+        results = cursor.fetchall()
+        return results
 
     def insert(self, url, article):
         self._insert(url['id'], article.title, article.text, article.publish_date)
