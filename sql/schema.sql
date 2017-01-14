@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS robots (
   allowed BOOLEAN
 );
 CREATE TABLE IF NOT EXISTS sources (
-  base_url INTEGER REFERENCES urls(id) PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
+  base_url INTEGER REFERENCES urls(id) UNIQUE,
   name TEXT UNIQUE
 );
 CREATE TABLE IF NOT EXISTS visits (
@@ -25,7 +26,8 @@ CREATE TABLE IF NOT EXISTS articles (
   url INTEGER REFERENCES urls(id) PRIMARY KEY,
   title TEXT,
   text TEXT,
-  date DATE
+  date DATE,
+  source INTEGER REFERENCES sources(id)
 );
 CREATE TABLE article_labels (
   id SERIAL PRIMARY KEY,

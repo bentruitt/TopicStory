@@ -50,7 +50,7 @@ class Sources:
 
     def _lookup(self, source_url_id):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        q = '''SELECT name,base_url FROM sources WHERE base_url=%s;'''
+        q = '''SELECT id,name,base_url FROM sources WHERE base_url=%s;'''
         cursor.execute(q, (source_url_id,))
         source = cursor.fetchone()
         return source
@@ -60,7 +60,7 @@ class Sources:
         q = '''
             INSERT INTO sources (name, base_url)
                 VALUES (%s,%s)
-                RETURNING name,base_url;'''
+                RETURNING id,name,base_url;'''
         cursor.execute(q, (source_name, base_url_id))
         source = cursor.fetchone()
         self.conn.commit()
@@ -142,15 +142,15 @@ class Articles:
     def __init__(self, conn):
         self.conn = conn
 
-    def insert(self, url, article):
-        self._insert(url['id'], article.title, article.text, article.publish_date)
+    def insert(self, url, article, source):
+        self._insert(url['id'], article.title, article.text, article.publish_date, source['id'])
 
-    def _insert(self, url, title, text, date):
+    def _insert(self, url_id, title, text, date, source_id):
         cursor = self.conn.cursor()
         q = '''
-          INSERT INTO articles (url,title,text,date)
-            SELECT %s, %s, %s, %s WHERE NOT EXISTS (
+          INSERT INTO articles (url,title,text,date,source)
+            SELECT %s, %s, %s, %s, %s WHERE NOT EXISTS (
               SELECT url FROM articles WHERE url=%s
             );'''
-        cursor.execute(q, (url, title, text, date, url))
+        cursor.execute(q, (url_id, title, text, date, source_id, url_id))
         self.conn.commit()

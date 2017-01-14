@@ -55,7 +55,7 @@ def crawl(base_url_string):
         robots.insert_many(found_urls)
         visit = visits.insert(visit_url)
         links.insert_many(visit, found_urls)
-        articles.insert(visit_url, article)
+        articles.insert(visit_url, article, source)
 
         time.sleep(TIME_BETWEEN_REQUESTS)
 
