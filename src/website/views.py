@@ -1,9 +1,8 @@
 from flask import render_template, request, abort
 from website import app
 
-#import models.articles
-#import models.cosine_similarities
 from database import get_db
+import models
 
 @app.route('/')
 def index():
@@ -11,7 +10,17 @@ def index():
 
 @app.route('/articles')
 def articles():
-    return render_template('articles.html')
+    conn = get_db()
+    articles = models.Articles(conn)
+    num_articles = articles.count_articles()
+    articles_by_source = articles.count_articles_by_source()
+    articles_by_date = articles.count_articles_by_date()
+    return render_template(
+            'articles.html',
+            num_articles=num_articles,
+            articles_by_source=articles_by_source,
+            articles_by_date=articles_by_date
+    )
 
 @app.route('/topics')
 def topics():
@@ -20,26 +29,3 @@ def topics():
 @app.route('/clustering')
 def clustering():
     return render_template('clustering.html')
-
-# @app.route('/article')
-# def article():
-#     articles = models.articles.Articles(get_db())
-#     article = articles.get_random_article()
-#     return render_template('article.html', article=article)
-
-# @app.route('/list-all')
-# def list_all():
-#     articles = models.articles.Articles(get_db())
-#     articles = articles.get_all_articles()
-#     return render_template('list.html', articles=articles)
-# 
-# @app.route('/cosine/<int:article_id>')
-# def cosine(article_id=None):
-#     articles = models.articles.Articles(get_db())
-#     cosine_similarities = models.cosine_similarities.CosineSimilarities(get_db())
-#     try:
-#         main_article = articles.lookup_article(article_id)
-#     except ValueError:
-#         abort(404)
-#     compared_articles = cosine_similarities.get_article_similarities(article_id)
-#     return render_template('cosine.html', main_article=main_article, articles=compared_articles)

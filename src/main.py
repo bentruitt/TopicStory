@@ -25,4 +25,4 @@ if __name__ == '__main__':
         cosine.calculate_cosine_similarities()
 
     elif args.test_server:
-        test_server.app.run()
+        test_server.run()

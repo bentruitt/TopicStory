@@ -42,3 +42,8 @@ body {
 .nav-item:hover {
   background-color: hsl(204, 43%, 50%);
 }
+
+.summary-table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}

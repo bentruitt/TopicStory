@@ -2,6 +2,8 @@ Major Goals
 -----------
 - All: Reorganize database queries
     --> Return dictionaries instead of objects
+    --> Have either a single models.py file or models/ module which is accessed by all three subprojects (add stuff as needed)
+            --> put off for now (not sure how much more organized this would make the codebase)
     --> Would be useful for simplifying queries, allowing for dynamic changes, less overhead, etc.
 - Website: display recent articles
     --> Main page would have overview of count for last week for each source

@@ -1,6 +1,6 @@
 from website import app
 from flask import g
-from config import connect
+from conn import connect
 
 def get_db():
     db = getattr(g, '_database', None)

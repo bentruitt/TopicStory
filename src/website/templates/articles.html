@@ -9,5 +9,42 @@ Recent Articles
 {% endblock %}
 
 {% block content %}
-<p>This page has no content yet.</p>
+
+<div>
+<h2>Total number of articles</h2>
+<p>Total number of articles in the database: <b>{{ num_articles }}</b></p>
+</div>
+
+<div>
+<h2>Articles by source</h2>
+<table class="summary-table">
+    <tr>
+        <td><b>Source name</b></td>
+        <td><b>Number of articles</b></td>
+    </tr>
+    {% for source in articles_by_source %}
+    <tr>
+        <td>{{ source.source_name }}</td>
+        <td>{{ source.num_articles }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+<div>
+<h2>Articles by publish date</h2>
+<table class="summary-table">
+    <tr>
+        <td><b>Publish date</b></td>
+        <td><b>Number of articles</b></td>
+    </tr>
+    {% for date in articles_by_date %}
+    <tr>
+        <td>{{ date.date }}</td>
+        <td>{{ date.num_articles }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
 {% endblock %}

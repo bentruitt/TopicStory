@@ -5,6 +5,35 @@ class Articles:
     def __init__(self, conn):
         self.conn = conn
 
+    def count_articles(self):
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        q = '''SELECT COUNT(*) AS num_articles FROM articles; '''
+        cursor.execute(q)
+        num_articles = cursor.fetchone()['num_articles']
+        return num_articles
+    
+    def count_articles_by_source(self):
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        q = '''
+            SELECT sources.name AS source_name, COUNT(*) AS num_articles
+            FROM articles JOIN sources ON articles.source = sources.id
+            GROUP BY sources.name;
+            '''
+        cursor.execute(q)
+        articles_by_source = cursor.fetchall()
+        return articles_by_source
+
+    def count_articles_by_date(self):
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        q = '''
+            SELECT articles.date AS publish_date, COUNT(*) AS num_articles
+            FROM articles
+            GROUP BY date;
+            '''
+        cursor.execute(q)
+        articles_by_date = cursor.fetchall()
+        return articles_by_date
+
     def lookup_recent_articles(self, conn):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         q = '''
@@ -13,6 +42,7 @@ class Articles:
                     JOIN articles ON urls.id=articles.url
                     JOIN sources ON urls.
             '''
+        return None
 
 
     def insert(self, url, article):
