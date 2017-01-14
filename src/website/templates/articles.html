@@ -40,7 +40,7 @@ Recent Articles
     </tr>
     {% for date in articles_by_date %}
     <tr>
-        <td>{{ date.date }}</td>
+        <td>{{ date.publish_date }}</td>
         <td>{{ date.num_articles }}</td>
     </tr>
     {% endfor %}
