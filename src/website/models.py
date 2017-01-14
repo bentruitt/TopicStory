@@ -7,7 +7,7 @@ class Articles:
 
     def count_articles(self):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        q = '''SELECT COUNT(*) AS num_articles FROM articles; '''
+        q = '''SELECT COUNT(*) AS num_articles FROM articles;'''
         cursor.execute(q)
         num_articles = cursor.fetchone()['num_articles']
         return num_articles
@@ -17,7 +17,8 @@ class Articles:
         q = '''
             SELECT sources.name AS source_name, COUNT(*) AS num_articles
             FROM articles JOIN sources ON articles.source = sources.id
-            GROUP BY sources.name;
+            GROUP BY sources.name
+            ORDER BY sources.name ASC;
             '''
         cursor.execute(q)
         articles_by_source = cursor.fetchall()
@@ -28,7 +29,8 @@ class Articles:
         q = '''
             SELECT articles.date AS publish_date, COUNT(*) AS num_articles
             FROM articles
-            GROUP BY date;
+            GROUP BY date
+            ORDER BY publish_date DESC;
             '''
         cursor.execute(q)
         articles_by_date = cursor.fetchall()
