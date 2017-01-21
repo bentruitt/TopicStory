@@ -8,11 +8,6 @@ import os
 import score as s
 import util
 import models
-# import models.robots
-# import models.visits
-# import models.articles
-# import models.links
-# import models.urls
 from config import MAX_CRAWL_TIME, TIME_BETWEEN_REQUESTS
 from conn import connect
 
