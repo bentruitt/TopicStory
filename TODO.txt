@@ -1,8 +1,5 @@
 Major Goals
 -----------
-- Crawler: Get the freaking publish date!!!
-    --> Only after I made the live tracker did I notice *most* articles have no publish date
-    --> But I'm pretty sure it's supposed to work seamlessly.
 - All: Reorganize database queries
     --> Return dictionaries instead of objects
     --> Have either a single models.py file or models/ module which is accessed by all three subprojects (add stuff as needed)

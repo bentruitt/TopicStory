@@ -8,8 +8,10 @@ to have better chance of getting the publish date.
 
 from __future__ import division
 import psycopg2
+import psycopg2.extras
 from newspaper import Article
 import time
+from collections import Counter
 
 DB_USER = 'scott'
 DB_PASSWORD = 'BZXa8ksLIGRAKwhmR4p6Eodcl'
@@ -56,23 +58,30 @@ def test_download_simple():
         time.sleep(20)
 
 def fraction_with_publish_date(conn):
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     q_with_publish_date = '''
         SELECT sources.name AS source, COUNT(articles.url) as num_with_date
         FROM articles JOIN sources
             ON articles.source=sources.id
+            JOIN article_labels
+            ON articles.url=article_labels.url
         WHERE articles.date IS NOT NULL
+            AND article_labels.is_article=True
         GROUP BY sources.name;'''
     cursor.execute(q_with_publish_date)
-    sources_with_publish_date = cursor.fetchall()
-    print sources_with_publish_date
+    sources_with_publish_date = Counter(cursor.fetchall())
+    print sources_with_publish_date['nytimes']
 
     q_without_publish_date = '''
         SELECT sources.name AS source, COUNT(articles.url) as num_with_date
         FROM articles JOIN sources
             ON articles.source=sources.id
+            JOIN article_labels
+            ON articles.url=article_labels.url
         WHERE articles.date IS NULL
+            AND article_labels.is_article=True
         GROUP BY sources.name;'''
+    cursor.execute(q_without_publish_date)
     sources_without_publish_date = cursor.fetchall()
     print sources_without_publish_date
 
