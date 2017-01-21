@@ -37,14 +37,14 @@ def crawl(base_url_string):
         logging.info('VISIT: {0}, {1}'.format(util.time_string(time.time()), visit_url['url']))
 
         try:
-            html_text = util.download_html(visit_url['url'])
+            article = util.download_article(visit_url['url'])
         except Exception as e:
             logging.error('Error when downloading {0}'.format(visit_url['url']))
             logging.error(traceback.format_exc())
             raise
+        html_text = article.html
 
         found_links = util.extract_links(html_text, base_url['url'])
-        article = util.extract_article(html_text, base_url['url'])
 
         found_urls = urls.insert_many(found_links)
         robots.insert_many(found_urls)

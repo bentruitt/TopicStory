@@ -15,6 +15,22 @@ def download_html(url):
     text = f.read()
     return text
 
+def download_article(url):
+    '''
+    Takes a url, downloads the article through the newspaper API.
+    Has a better chance of getting the publish date than just
+    downloading the url directly and feeding only the html
+    to the Article class (the Article class uses requests under
+    the hood and gets more information than just the html).
+    To get the html, call article.html
+    '''
+    url = clean_url(url)
+    url = add_prefix(url)
+    article = newspaper.Article(url)
+    article.download()
+    article.parse()
+    return article
+
 def extract_links(html_text, base_url):
     '''
     Takes the html from a page and the base url,
