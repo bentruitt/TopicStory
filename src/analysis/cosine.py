@@ -1,11 +1,8 @@
 import string
 import gensim
-# from gensim import corpora, models, similarities
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 import sys
 
-# import models.articles as ma
-# import models.cosine_similarities as mcs
 from conn import connect
 import models
 
