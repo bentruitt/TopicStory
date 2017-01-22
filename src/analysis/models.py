@@ -1,5 +1,6 @@
 import psycopg2.extras
 import itertools
+import datetime
 
 class Urls:
 
@@ -40,11 +41,26 @@ class Articles:
     def get_all_articles(self):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         q = '''
-          SELECT DISTINCT articles.url,articles.title,articles.text,articles.date
+            SELECT DISTINCT articles.url,articles.title,articles.text,articles.date
             FROM articles JOIN article_labels ON articles.url=article_labels.url
             WHERE article_labels.is_article=TRUE
             ORDER BY articles.url;'''
         cursor.execute(q)
+        articles = cursor.fetchall()
+        return articles
+
+    def get_articles_by_date(self, date):
+        if type(date) != datetime.date:
+            raise ValueError('Argument `date` must be of type `datetime.date`')
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        q = '''
+            SELECT articles.url,articles.title,articles.text,articles.date,sources.name
+            FROM articles JOIN article_labels ON articles.url=article_labels.url
+                JOIN sources ON articles.source=sources.id
+            WHERE article_labels.is_article=TRUE
+                AND articles.date=%s
+            ORDER BY articles.url;'''
+        cursor.execute(q, (date,))
         articles = cursor.fetchall()
         return articles
 

@@ -2,6 +2,7 @@ flask
 gensim
 gunicorn
 newspaper
+nltk
 numpy
 pillow
 psutil
