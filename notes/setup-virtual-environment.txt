@@ -23,3 +23,7 @@ $ vim requirements.txt
 Fifth, install the requirements (make sure the virtaul environment is currently activated).
 $ pip install -r requirements.txt --upgrade
 (the upgrade is required to get the most recent version of pillow, otherwise it throws IOError's)
+
+Sixth (specific to this project), add the project directory to the python path. This allows the test scripts to import the project.
+$ vim venv/lib/python2.7/site-packages/news.pth
+    ../../..
