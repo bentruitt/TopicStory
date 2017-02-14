@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}
+Recent Articles
+{% endblock %}
+
+{% block header %}
+Recent Articles
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <h2>Total number of articles: {{ num_articles }}</h2>
+</div>
+
+<div>
+<h2>Articles by source</h2>
+<table class="summary-table">
+    <tr>
+        <td><b>Source name</b></td>
+        <td><b>Number of articles</b></td>
+    </tr>
+    {% for source in num_articles_by_source %}
+    <tr>
+        <td><a href="/articles/source={{ source.source_name }}">{{ source.source_name }}</a></td>
+        <td>{{ source.num_articles }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+<div>
+<h2>Articles by publish date</h2>
+<table class="summary-table">
+    <tr>
+        <td><b>Publish date</b></td>
+        <td><b>Number of articles</b></td>
+    </tr>
+    {% for date in num_articles_by_date %}
+    <tr>
+        <td><a href="/articles/date={{ date.publish_date }}">{{ date.publish_date }}</td>
+        <td>{{ date.num_articles }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+{% endblock %}
