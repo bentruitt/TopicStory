@@ -29,12 +29,16 @@ CREATE TABLE IF NOT EXISTS articles (
   date DATE,
   source INTEGER REFERENCES sources(id)
 );
-CREATE TABLE article_labels (
+CREATE TABLE IF NOT EXISTS article_labels (
   id SERIAL PRIMARY KEY,
   url INTEGER REFERENCES urls(id) UNIQUE NOT NULL,
   is_article BOOLEAN
 );
-CREATE TABLE cosine_similarities (
+CREATE TABLE IF NOT EXISTS article_headline_vectors (
+    url INTEGER REFERENCES urls(id) PRIMARY KEY,
+    headline_vector FLOAT[300]
+);
+CREATE TABLE IF NOT EXISTS cosine_similarities (
   article_1 INTEGER REFERENCES articles(url) NOT NULL,
   article_2 INTEGER REFERENCES articles(url) NOT NULL,
   similarity REAL,

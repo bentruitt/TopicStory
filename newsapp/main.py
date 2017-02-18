@@ -5,6 +5,7 @@ import crawler.crawler as crawler
 import analysis.labels as labels
 import analysis.cosine as cosine
 import analysis.clustering as clustering
+import analysis.nlp as nlp
 import website.test_server as test_server
 import website.deploy_server as deploy_server
 
@@ -16,6 +17,7 @@ if __name__ == '__main__':
     parser.add_argument('--cosine', help='create cosine similarities for all pairs of articles', action='store_true')
     parser.add_argument('--cluster', help='cluster articles for a given date, input as yyyy-mm-dd', nargs=1)
     parser.add_argument('--thresh', help='if using --cluster, use --tresh to change the clustering threshold (defaults to 0.7)', nargs=1)
+    parser.add_argument('--compute-headline-vectors', help='compute sentence2vec for every headline in the database', action='store_true')
 
     parser.add_argument('--test-server', help='run a local test server', action='store_true')
     parser.add_argument('--deploy-server', help='deploy the actual server', action='store_true')
@@ -39,6 +41,9 @@ if __name__ == '__main__':
         else:
             thresh = 0.7
         clustering.cluster_date(date, thresh=thresh)
+
+    elif args.compute_headline_vectors:
+        nlp.compute_headline_vectors()
 
     elif args.test_server:
         test_server.run()
