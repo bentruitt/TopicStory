@@ -4,6 +4,7 @@ import datetime
 
 from database import get_db
 import models
+import analysis.nlp as nlp
 
 @app.route('/')
 def index():
@@ -91,6 +92,27 @@ def articles_by_source_and_date(source_name, publish_date):
 def topics():
     return render_template('topics.html')
 
-@app.route('/clustering')
+@app.route('/clustering', methods=['GET'])
 def clustering():
-    return render_template('clustering.html')
+    if request.args.get('publish_date'):
+        try:
+            publish_date = datetime.datetime.strptime(request.args.get('publish_date'), '%Y-%m-%d').date()
+        except ValueError:
+            return abort(404)
+    else:
+        publish_date = datetime.datetime.strptime('2017-01-20', '%Y-%m-%d').date()
+    if request.args.get('threshold'):
+        try:
+            threshold = float(request.args.get('threshold'))
+        except ValueError:
+            return abort(404)
+    else:
+        threshold = 0.18
+
+    from_table = 'spacy_text_vectors'
+    from_field = 'spacy_text_vector'
+
+    conn = get_db()
+    article_clusters = nlp.compute_clusters_by_date(conn, publish_date=publish_date, threshold=threshold, from_table=from_table, from_field=from_field)
+    print article_clusters
+    return render_template('clustering.html', publish_date=publish_date, threshold=threshold, article_clusters=article_clusters)

@@ -17,7 +17,8 @@ if __name__ == '__main__':
     parser.add_argument('--cosine', help='create cosine similarities for all pairs of articles', action='store_true')
     parser.add_argument('--cluster', help='cluster articles for a given date, input as yyyy-mm-dd', nargs=1)
     parser.add_argument('--thresh', help='if using --cluster, use --tresh to change the clustering threshold (defaults to 0.7)', nargs=1)
-    parser.add_argument('--compute-headline-vectors', help='compute sentence2vec for every headline in the database', action='store_true')
+    parser.add_argument('--spacy-title-vectors', help='compute and store spacy vectors for every title in the database', action='store_true')
+    parser.add_argument('--spacy-text-vectors', help='compute and store spacy vectors for every text in the database', action='store_true')
 
     parser.add_argument('--test-server', help='run a local test server', action='store_true')
     parser.add_argument('--deploy-server', help='deploy the actual server', action='store_true')
@@ -42,8 +43,11 @@ if __name__ == '__main__':
             thresh = 0.7
         clustering.cluster_date(date, thresh=thresh)
 
-    elif args.compute_headline_vectors:
-        nlp.compute_headline_vectors()
+    elif args.spacy_title_vectors:
+        nlp.compute_spacy_title_vectors()
+
+    elif args.spacy_text_vectors:
+        nlp.compute_spacy_text_vectors()
 
     elif args.test_server:
         test_server.run()

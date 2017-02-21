@@ -34,14 +34,22 @@ CREATE TABLE IF NOT EXISTS article_labels (
   url INTEGER REFERENCES urls(id) UNIQUE NOT NULL,
   is_article BOOLEAN
 );
-CREATE TABLE IF NOT EXISTS article_headline_vectors (
-    url INTEGER REFERENCES urls(id) PRIMARY KEY,
-    headline_vector FLOAT[300]
-);
 CREATE TABLE IF NOT EXISTS cosine_similarities (
   article_1 INTEGER REFERENCES articles(url) NOT NULL,
   article_2 INTEGER REFERENCES articles(url) NOT NULL,
   similarity REAL,
   PRIMARY KEY(article_1,article_2),
   CHECK (article_2 > article_1)
+);
+
+-- 300-length vectors created from spacy
+-- vectors for article headlines
+CREATE TABLE IF NOT EXISTS spacy_title_vectors (
+    url INTEGER REFERENCES urls(id) PRIMARY KEY,
+    spacy_title_vector REAL[300]
+);
+-- vectors for article contents
+CREATE TABLE IF NOT EXISTS spacy_text_vectors (
+    url INTEGER REFERENCES urls(id) PRIMARY KEY,
+    spacy_text_vector REAL[300]
 );

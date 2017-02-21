@@ -9,5 +9,16 @@ Clustering
 {% endblock %}
 
 {% block content %}
-<p>This page has no content yet.</p>
+<form action="/clustering" method="GET">
+    Publish date (format yyyy-mm-dd): <input type="text" name="publish_date" value="{{ publish_date }}"><br>
+    Threshold (format float): <input type="text" name="threshold" value="{{ threshold }}"><br>
+    <input type="submit" value="submit">
+</form>
+{% for article_cluster in article_clusters[:5] %}
+<br>
+{% for article in article_cluster %}
+{{ article.title }}
+<br>
+{% endfor %}
+{% endfor %}
 {% endblock %}
