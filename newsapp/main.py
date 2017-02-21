@@ -6,6 +6,7 @@ import analysis.labels as labels
 import analysis.cosine as cosine
 import analysis.clustering as clustering
 import analysis.nlp as nlp
+import analysis.entailment.train_nn as train_nn
 import website.test_server as test_server
 import website.deploy_server as deploy_server
 
@@ -19,6 +20,7 @@ if __name__ == '__main__':
     parser.add_argument('--thresh', help='if using --cluster, use --tresh to change the clustering threshold (defaults to 0.7)', nargs=1)
     parser.add_argument('--spacy-title-vectors', help='compute and store spacy vectors for every title in the database', action='store_true')
     parser.add_argument('--spacy-text-vectors', help='compute and store spacy vectors for every text in the database', action='store_true')
+    parser.add_argument('--nn-grid-search', help='train the neural network over a grid search, pickles the result', action='store_true')
 
     parser.add_argument('--test-server', help='run a local test server', action='store_true')
     parser.add_argument('--deploy-server', help='deploy the actual server', action='store_true')
@@ -48,6 +50,9 @@ if __name__ == '__main__':
 
     elif args.spacy_text_vectors:
         nlp.compute_spacy_text_vectors()
+
+    elif args.nn_grid_search:
+        train_nn.nn_grid_search()
 
     elif args.test_server:
         test_server.run()

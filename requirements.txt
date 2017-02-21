@@ -1,9 +1,11 @@
 flask
 gensim
 gunicorn
+keras
 newspaper
 nltk
 numpy
+pandas
 pillow
 psutil
 psycopg2
