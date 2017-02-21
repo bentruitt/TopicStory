@@ -17,9 +17,7 @@ By training a neural network to predict these three classes on a large training 
 If the model outputs *contradiction* for a pair of articles, then we can infer that these articles disagree with each other.
 
 Some resources:
-
-[Textual entailment Wikipedia page](https://en.wikipedia.org/wiki/Textual_entailment)
-
-[Stanford NLP page on textual entailment, contains the training data](http://nlp.stanford.edu/projects/snli/)
+- [Textual entailment Wikipedia page](https://en.wikipedia.org/wiki/Textual_entailment)
+- [Stanford NLP page on textual entailment, contains the training data](http://nlp.stanford.edu/projects/snli/)
 
 Some websites are working on fake news detectors, but there doesn't seem to be any projects for finding disagreements in the news.
