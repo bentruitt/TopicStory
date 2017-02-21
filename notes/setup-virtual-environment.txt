@@ -26,3 +26,9 @@ $ pip install -r requirements.txt --upgrade
 
 Sixth, download spacy corpus:
 $ python -m spacy.en.download all
+
+Seventh, setup ipython to work in the virtual environment:
+$ vim requirements.txt
+    ipython
+$ vim ~/.bashrc
+    alias ipython-venv="python -c 'import IPython; IPython.terminal.ipapp.launch_new_instance()'"

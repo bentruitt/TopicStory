@@ -13,3 +13,5 @@ scipy
 sklearn
 uwsgi
 spacy
+
+ipython

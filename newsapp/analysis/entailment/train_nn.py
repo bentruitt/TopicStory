@@ -1,9 +1,10 @@
 import os
 import numpy as np
 import pandas as pd
-from sklearn.grid_search import GridSearchCV
+import cPickle as pickle
+from sklearn.grid_search import GridSearchCV, ParameterGrid
 from sklearn.preprocessing import StandardScaler
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, clone
 from keras.utils import np_utils
 from keras.models import Sequential
 from keras.layers.core import Dense
@@ -19,11 +20,11 @@ def nn_grid_search():
     params = {
             'num_train': [5, 50, 500, 5000, 50000],
             'num_hidden': [10, 30, 100],
-            'nb_epoch': [10, 50]
+            'nb_epoch': [10]
     }
 
     # up num_train to all data once I get MVP locally
-    df = load_data(num_train=50000)
+    df = load_data(num_train=5000)
     # get X,y
     X_cols = ['feature_{}'.format(i) for i in range(600)]
     y_col = 'y'
@@ -31,17 +32,16 @@ def nn_grid_search():
     y = df.loc[:,y_col].values
     X_train = X[df['split']=='train']
     y_train = y[df['split']=='train']
+    X_dev = X[df['split']=='dev']
+    y_dev = y[df['split']=='dev']
 
     model = NNModel(nb_classes=3)
-    grid_search = GridSearchCV(
+    grid_search = CustomGridSearch(
             estimator=model,
-            param_grid=params,
-            cv=3,
-            scoring='accuracy',
-            verbose=3,
-            n_jobs=-1
+            param_grid=params
     )
-    grid_search.fit(X_train, y_train)
+    grid_search.fit(X_train, y_train, X_dev, y_dev)
+    return grid_search
 
     entailment_dir = os.path.dirname(os.path.realpath(__file__))
     grid_search_filename = os.path.join(entailment_dir, 'grid_search.pkl')
@@ -49,7 +49,7 @@ def nn_grid_search():
     with open(grid_search_filename, 'w') as f:
         pickle.dump(grid_search, f)
     with open(best_model_filename, 'w') as f:
-        pickle.dump(grid_search.best_estimator, f)
+        pickle.dump(grid_search.best_estimator_, f)
 
 def load_data(num_train):
     entailment_dir = os.path.dirname(os.path.realpath(__file__))
@@ -66,6 +66,29 @@ def load_data(num_train):
     # create one dataframe with all the data, (use df['split']=='train'/'dev'/'test' to get split)
     df = pd.concat([df_train, df_dev, df_test], axis=0, ignore_index=True)
     return df
+
+class CustomGridSearch():
+
+    def __init__(self, estimator, param_grid):
+        self.estimator = estimator
+        self.param_grid = param_grid
+
+    def fit(self, X_train, y_train, X_cv, y_cv):
+        search_results = []
+        param_sets = ParameterGrid(self.param_grid)
+        for params in param_sets:
+            print params
+            estimator = clone(self.estimator)
+            estimator.set_params(**params)
+            estimator.fit(X_train, y_train)
+            score = estimator.score(X_cv, y_cv)
+            params['score'] = score
+            params['estimator'] = estimator
+            search_results.append(params)
+        scores = np.array([result['score'] for result in search_results])
+        best_estimator = search_results[scores.argmax()]['estimator']
+        self.search_results_ = search_results
+        self.best_estimator_ = best_estimator
 
 class NNModel(BaseEstimator):
 
@@ -111,3 +134,8 @@ class NNModel(BaseEstimator):
     def predict(self, X_test):
         X_test = self.scaler.transform(X_test)
         return self.model.predict_classes(X_test)
+
+    def score(self, X_test, y_test):
+        y_pred = self.predict(X_test)
+        acc = np.mean(y_test == y_pred)
+        return acc
