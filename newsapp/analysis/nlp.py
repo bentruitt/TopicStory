@@ -1,4 +1,4 @@
-from conn import connect
+from newsapp.conn import connect
 import spacy
 import scipy.spatial.distance as distance
 import scipy.cluster.hierarchy as hcluster
@@ -133,7 +133,7 @@ def lookup_vectors_by_date(conn, from_table, from_field, publish_date):
     '''
     cursor = conn.cursor()
     q = '''
-        SELECT vec.url,'''+from_field+'''
+        SELECT vec.url,vec.'''+from_field+'''
         FROM '''+from_table+''' AS vec
             JOIN articles
                 ON vec.url=articles.url

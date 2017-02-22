@@ -7,6 +7,7 @@ import analysis.cosine as cosine
 import analysis.clustering as clustering
 import analysis.nlp as nlp
 import analysis.entailment.train_nn as train_nn
+import analysis.entailment.predict_news_entailment as predict_news_entailment
 import website.test_server as test_server
 import website.deploy_server as deploy_server
 
@@ -21,6 +22,7 @@ if __name__ == '__main__':
     parser.add_argument('--spacy-title-vectors', help='compute and store spacy vectors for every title in the database', action='store_true')
     parser.add_argument('--spacy-text-vectors', help='compute and store spacy vectors for every text in the database', action='store_true')
     parser.add_argument('--nn-grid-search', help='train the neural network over a grid search, pickles the result', action='store_true')
+    parser.add_argument('--predict-news-entailment', help='predict entailment pairs for news articles', action='store_true')
 
     parser.add_argument('--test-server', help='run a local test server', action='store_true')
     parser.add_argument('--deploy-server', help='deploy the actual server', action='store_true')
@@ -53,6 +55,9 @@ if __name__ == '__main__':
 
     elif args.nn_grid_search:
         train_nn.nn_grid_search()
+
+    elif args.predict_news_entailment:
+        predict_news_entailment.predict_entailment_by_date()
 
     elif args.test_server:
         test_server.run()

@@ -1,31 +1,22 @@
 {% extends "base.html" %}
 
 {% block title %}
-Topic Modeling
+Clustering
 {% endblock %}
 
 {% block header %}
-Topic Modeling
+Clustering
 {% endblock %}
 
 {% block content %}
-<form action="/topics" method="GET">
+<form action="/clustering" method="GET">
     Publish date (format yyyy-mm-dd): <input type="text" name="publish_date" value="{{ publish_date }}"><br>
     <input type="submit" value="submit">
 </form>
-{% for topic in topics %}
+{% for article_1, article_2 in disagreements %}
+{{ article_1.title }}
 <br>
-<b>
-    Topic:
-    {% for word in topic.words %}
-    {{ word }}
-    {% endfor %}
-    <br>
-</b>
-    {% for article in topic.articles %}
-    {{ article.title }}
-    <br>
-    {% endfor %}
-    <br>
+{{ article_2.title }}
+<br><br>
 {% endfor %}
 {% endblock %}
