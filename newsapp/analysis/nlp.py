@@ -1,4 +1,4 @@
-from newsapp.conn import connect
+from conn import connect
 import spacy
 import scipy.spatial.distance as distance
 import scipy.cluster.hierarchy as hcluster

@@ -3,8 +3,8 @@ import datetime
 import itertools
 import cPickle as pickle
 import numpy as np
-from newsapp.conn import connect
-from newsapp.analysis.nlp import lookup_vectors_by_date, lookup_article_info
+from conn import connect
+from analysis.nlp import lookup_vectors_by_date, lookup_article_info
 import nn_model
 
 def find_disagreements(conn, publish_date):
