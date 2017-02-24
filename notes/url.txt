@@ -1,2 +1,2 @@
 digital ocean: http://104.131.191.240
-aws: ec2-52-55-120-23.compute-1.amazonaws.com
+aws: ec2-52-55-120-23.compute-1.amazonaws.com:8105

@@ -1,0 +1,16 @@
+To start a new tmux session:
+$ tmux new -s session_name
+
+To list all existing tmux sessions, either works:
+$ tmux list-sessions
+$ tmux ls
+
+To detach from a tmux session, either works:
+$ tmux detach
+Ctrl b + d
+
+To attach to an existing tmux session:
+$ tmux attach -t session_name
+
+To kill a tmux session:
+$ tmux kill-session -t session_name

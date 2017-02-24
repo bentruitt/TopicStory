@@ -135,7 +135,7 @@ def disagreements():
         except ValueError:
             return abort(404)
     else:
-        publish_date = datetime.datetime.strptime('2017-01-20', '%Y-%m-%d').date()
+        publish_date = datetime.datetime.strptime('2017-02-22', '%Y-%m-%d').date()
 
     conn = get_db()
     disagreements = predict.find_disagreements(conn, publish_date)
