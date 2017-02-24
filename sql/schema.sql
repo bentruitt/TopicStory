@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS sources (
 );
 CREATE TABLE IF NOT EXISTS visits (
   id SERIAL PRIMARY KEY,
-  source INTEGER REFERENCES sources(base_url) NOT NULL,
+  source INTEGER REFERENCES sources(id) NOT NULL,
   visit_url INTEGER REFERENCES urls(id) NOT NULL,
   visit_time TIMESTAMP
 );
