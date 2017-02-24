@@ -10,7 +10,6 @@ class Articles:
     def count_articles(self, by=None, source_name=None, publish_date=None):
         '''
         Counts articles in the database.
-        Only selects articles for which article_labels.is_article=True
         INPUT:
             by: str
                 Groups the counts by a certain property.
@@ -44,9 +43,8 @@ class Articles:
 
         # build base query
         q_select = ''' SELECT COUNT(*) AS num_articles '''
-        q_from = ''' FROM articles JOIN sources ON articles.source=sources.id
-                    JOIN article_labels ON articles.url=article_labels.url '''
-        q_where = ''' WHERE article_labels.is_article=True ''';
+        q_from = ''' FROM articles JOIN sources ON articles.source=sources.id'''
+        q_where = '''''';
         q_group = '''''';
         q_order = '''''';
         query_args = []
