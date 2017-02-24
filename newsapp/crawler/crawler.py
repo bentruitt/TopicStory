@@ -4,6 +4,7 @@ import logging
 import traceback
 import datetime
 import os
+import sys
 
 import score as s
 import util
@@ -62,3 +63,12 @@ def initialize_logging(base_url):
     log_filename = 'LOG_{0}.log'.format(source_str)
     log_path = os.path.join(log_dir, log_filename)
     logging.basicConfig(filename=log_path, filemode='a', level=logging.INFO)
+    sys.excepthook = log_unchecked_exception
+
+def log_unchecked_exception(exctype, value, tb):
+    log_str = '''
+UNCHECKED EXCEPTION
+    Type: {}
+    Value: {}
+    Traceback: {}'''.format(exctype, value, tb)
+    logging.error(log_str)
