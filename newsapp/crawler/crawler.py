@@ -13,7 +13,6 @@ import util
 import models
 import decide
 import crawler_queries as queries
-from config import MAX_CRAWL_TIME, TIME_BETWEEN_REQUESTS
 from conn import connect
 
 def crawl(base_url_string):
@@ -168,42 +167,6 @@ class Crawler:
             article_text = article.text
             article_date = self.extract_date_from_url(visit_url_string)
             queries.insert_article(conn, visit_url_id, article_title, article_text, article_date, source_id)
-
-        # while True:
-        #     visit_url = self.decide_next_visit(conn)
-        # urls = models.Urls(conn)
-        # base_url = urls.insert(base_url_string)
-
-        # sources = models.Sources(conn)
-        # source_name = util.extract_source(base_url_string)
-        # source = sources.insert(base_url, source_name)
-
-        # robots = models.Robots(base_url, conn)
-        # robots.insert(base_url)
-
-        # visits = models.Visits(source,conn)
-        # links = models.Links(conn)
-        # articles = models.Articles(conn)
-
-        # while (time.time() - start_time < MAX_CRAWL_TIME):
-        #     visit_url = self.decide_next_visit(conn)
-        #     logging.info('VISIT: {0}, {1}'.format(util.time_string(time.time()), visit_url['url']))
-
-        #     try:
-        #         article = util.download_article(visit_url['url'])
-        #         html_text = article.html
-        #         found_links = util.extract_links(html_text, base_url['url'])
-        #         found_urls = urls.insert_many(found_links)
-        #         robots.insert_many(found_urls)
-        #         visit = visits.insert(visit_url)
-        #         links.insert_many(visit, found_urls)
-        #         if self.is_article(visit_url['url']):
-        #             articles.insert(visit_url, article, source)
-        #     except Exception as e:
-        #         logging.error('Error when downloading {0}'.format(visit_url['url']))
-        #         logging.error(traceback.format_exc())
-
-        #     self.sleep()
 
 def initialize_logging(base_url):
     log_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'logs')

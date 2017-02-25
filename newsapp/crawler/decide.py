@@ -48,34 +48,3 @@ def find_unvisited_internal_urls(conn, crawl_id, base_url_string):
     urls = cursor.fetchall()
     urls = [dict(url) for url in urls]
     return urls
-
-# def allowed_by_robots(conn, url_id):
-#     '''
-#     Two inputs:
-#         conn - database connection
-#         url - integer, the url id in the database
-#     Returns a Boolean, True if allowed by robots.txt, False otherwise.
-#     '''
-#     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-#     q = '''
-#       SELECT allowed FROM robots
-#         WHERE url=%s;'''
-#     cursor.execute(q, (url_id,))
-#     allowed = cursor.fetchone()[0]
-#     return allowed
-
-def visited(conn, url_id):
-    '''
-    Two inputs:
-        conn - database connection
-        url_id - integer, the url id in the database
-    Returns a boolean, True if already visited, False otherwise.
-    '''
-    cursor = conn.cursor()
-    q = '''
-      SELECT EXISTS (
-        SELECT * FROM visits
-          WHERE visit_url=%s
-        );'''
-    cursor.execute(q, (url_id,))
-    return cursor.fetchone()[0]
