@@ -10,9 +10,8 @@ import robotparser as rp
 import numpy as np
 
 import util
-import models
 import decide
-import crawler_queries as queries
+import queries
 from conn import connect
 
 def crawl(base_url_string):
