@@ -77,7 +77,7 @@ class Crawler:
         robot_parser.read()
         self.robot_parser = robot_parser
 
-    def decide_next_visit(self, conn, crawl_id):
+    def decide_next_visit(self, conn, crawl_id, bad_urls):
         '''
         Not abstract.
         Decides which url to visit next.
@@ -103,6 +103,7 @@ class Crawler:
         # strategy 2 - visit any urls linked by the base url that haven't been visited yet (ignore previous crawls)
         urls = decide.find_unvisited_links_from_base(conn, crawl_id, base_url_string)
         urls = filter(lambda url: self.robot_parser.can_fetch("*", url['url']), urls)
+        urls = filter(lambda url: url['id'] not in bad_urls, urls)
         if len(urls) > 0:
             visit_url = random.choice(urls)
             return visit_url
@@ -110,6 +111,7 @@ class Crawler:
         # strategy 3 - visit any articles not visited yet (including previous crawls), starting with the most recent
         urls = decide.find_unvisited_internal_urls(conn, base_url_string)
         urls = filter(lambda url: self.robot_parser.can_fetch("*", url['url']), urls)
+        urls = filter(lambda url: url['id'] not in bad_urls, urls)
         urls = filter(lambda url: self.is_article(url['url']), urls)
         if len(urls) > 0:
             dates = map(lambda url: self.extract_date_from_url(url['url']), urls)
@@ -128,6 +130,7 @@ class Crawler:
             - Five exceptions in a row
         '''
         # initialize variables
+        bad_urls = set() # when a url doesn't work, add url_id to bad_urls, ignore in future
         error_count = 0
         base_url_string = self.base_url_string
         conn = connect()
@@ -146,7 +149,8 @@ class Crawler:
             if error_count == 5:
                 logging.error('Too many exceptions in a row, exiting.')
                 break
-            visit_url = self.decide_next_visit(conn, crawl_id)
+            print bad_urls
+            visit_url = self.decide_next_visit(conn, crawl_id, bad_urls)
             if visit_url is None:
                 logging.info('Finished crawling, no more urls to visit.')
                 break
@@ -157,6 +161,7 @@ class Crawler:
             except Exception as e:
                 logging.error('Error when downloading {0}'.format(visit_url['url']))
                 logging.error(traceback.format_exc())
+                bad_urls.add(visit_url['id'])
                 error_count += 1
             self.sleep()
 
