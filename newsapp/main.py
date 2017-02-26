@@ -1,8 +1,8 @@
 import argparse
 import datetime
 
-import crawler.crawler as crawler
 import crawler.crawler_foxnews as crawler_foxnews
+import crawler.crawler_nytimes as crawler_nytimes
 import analysis.labels as labels
 import analysis.cosine as cosine
 import analysis.clustering as clustering
@@ -14,8 +14,8 @@ import website.deploy_server as deploy_server
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Interact with the crawler database')
-    parser.add_argument('--crawl', help='spawn a continuous crawler for a given base url', nargs=1)
     parser.add_argument('--crawl-foxnews', help='spawn a continuous crawler for foxnews', action='store_true')
+    parser.add_argument('--crawl-nytimes', help='spawn a continuous crawler for the new york times', action='store_true')
 
     parser.add_argument('--label', help='create labels for all the built-in news sources', action='store_true')
     parser.add_argument('--cosine', help='create cosine similarities for all pairs of articles', action='store_true')
@@ -30,12 +30,11 @@ if __name__ == '__main__':
     parser.add_argument('--deploy-server', help='deploy the actual server', action='store_true')
     args = parser.parse_args()
 
-    if args.crawl:
-        base_url = args.crawl[0]
-        crawler.crawl(base_url)
-
-    elif args.crawl_foxnews:
+    if args.crawl_foxnews:
         crawler_foxnews.crawl()
+
+    elif args.crawl_nytimes:
+        crawler_nytimes.crawl()
 
     elif args.label:
         labels.add_labels()
