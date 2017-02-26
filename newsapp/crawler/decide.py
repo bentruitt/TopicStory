@@ -73,6 +73,5 @@ def find_unvisited_links_from_base(conn, crawl_id, base_url_string):
         '''
     cursor.execute(q, (base_url_string,crawl_id,crawl_id))
     urls = cursor.fetchall()
-    print urls
     urls = [dict(url) for url in urls]
     return urls
