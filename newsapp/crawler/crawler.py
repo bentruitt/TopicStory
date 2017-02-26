@@ -130,6 +130,8 @@ class Crawler:
             - Five exceptions in a row
         '''
         # initialize variables
+        visits = 0
+        MAX_VISITS = 1000 # so we don't just keep crawling forever
         bad_urls = set() # when a url doesn't work, add url_id to bad_urls, ignore in future
         error_count = 0
         base_url_string = self.base_url_string
@@ -162,6 +164,10 @@ class Crawler:
                 logging.error(traceback.format_exc())
                 bad_urls.add(visit_url['id'])
                 error_count += 1
+            visits += 1
+            if visits == MAX_VISITS:
+                logging.info('Finished crawling, reached max visits of {}'.format(MAX_VISITS))
+                break
             self.sleep()
 
     def visit(self, conn, crawl_id, source_id, visit_url):
