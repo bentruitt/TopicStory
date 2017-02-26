@@ -7,8 +7,7 @@ import numpy as np
 
 def crawl():
     base_url_string = 'foxnews.com'
-    article_regex = r'/[0-9]{4,4}/[0-9]{1,2}/[0-9]{1,2}/'
-    foxnews_crawler = FoxNewsCrawler(base_url_string, article_regex)
+    foxnews_crawler = FoxNewsCrawler(base_url_string)
     foxnews_crawler.crawl()
 
 class FoxNewsCrawler(Crawler):
@@ -19,9 +18,9 @@ class FoxNewsCrawler(Crawler):
         time.sleep(1)
     
     def is_article(self, url):
+        article_regex = r'/[0-9]{4,4}/[0-9]{1,2}/[0-9]{1,2}/'
         if re.search(r'print.html$', url):
             return False
-        article_regex = self.article_regex
         return bool(re.search(article_regex, url))
 
     def extract_date_from_url(self, url):

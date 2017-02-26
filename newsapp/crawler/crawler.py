@@ -14,38 +14,16 @@ import decide
 import queries
 from conn import connect
 
-def crawl(base_url_string):
-    crawler = Crawler(base_url_string)
-    crawler.crawl()
-
 class Crawler:
     '''
     Abstract class for crawling a news source.
     '''
 
-    def __init__(self, base_url_string, article_regex):
-        '''
-        Not abstract.
-        Parameters:
-            base_url_string, a string representing the base url for a source (eg, foxnews.com)
-            article_regex, a string representing a regex which only matches for articles
-        '''
-        self.base_url_string = base_url_string
-        self.article_regex = article_regex
-        self.initialize_robots()
-
-    def initialize_robots(self):
-        '''
-        Not abstract.
-        Initializes a robot parser for the crawler.
-        Use self.robot_parser.can_fetch("*", url) to decide if allowed or not.
-        '''
-        base_url_string = self.base_url_string
-        robot_url = util.robots_url(base_url_string)
-        robot_parser = rp.RobotFileParser()
-        robot_parser.set_url(robot_url)
-        robot_parser.read()
-        self.robot_parser = robot_parser
+    ########################
+    #                      #
+    #  Abstract functions  #
+    #                      #
+    ########################
 
     def sleep(self):
         '''
@@ -68,6 +46,35 @@ class Crawler:
         Takes a url as a string, returns a datetime.date object.
         '''
         return NotImplemented
+
+    ############################
+    #                          #
+    #  Non-Abstract functions  #
+    #                          #
+    ############################
+
+    def __init__(self, base_url_string):
+        '''
+        Not abstract.
+        Parameters:
+            base_url_string, a string representing the base url for a source (eg, foxnews.com)
+            article_regex, a string representing a regex which only matches for articles
+        '''
+        self.base_url_string = base_url_string
+        self.initialize_robots()
+
+    def initialize_robots(self):
+        '''
+        Not abstract.
+        Initializes a robot parser for the crawler.
+        Use self.robot_parser.can_fetch("*", url) to decide if allowed or not.
+        '''
+        base_url_string = self.base_url_string
+        robot_url = util.robots_url(base_url_string)
+        robot_parser = rp.RobotFileParser()
+        robot_parser.set_url(robot_url)
+        robot_parser.read()
+        self.robot_parser = robot_parser
 
     def decide_next_visit(self, conn, crawl_id):
         '''
