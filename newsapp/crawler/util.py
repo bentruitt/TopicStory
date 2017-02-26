@@ -1,6 +1,6 @@
 import re
 import lxml.html as html
-import urllib
+import requests
 import newspaper
 import datetime
 
@@ -11,8 +11,8 @@ def download_html(url):
     url = url
     url = clean_url(url)
     url = add_prefix(url)
-    f = urllib.urlopen(url)
-    text = f.read()
+    r = requests.get(url)
+    text = r.text
     return text
 
 def download_article(url):
