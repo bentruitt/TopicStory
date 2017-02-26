@@ -149,7 +149,6 @@ class Crawler:
             if error_count == 5:
                 logging.error('Too many exceptions in a row, exiting.')
                 break
-            print bad_urls
             visit_url = self.decide_next_visit(conn, crawl_id, bad_urls)
             if visit_url is None:
                 logging.info('Finished crawling, no more urls to visit.')
