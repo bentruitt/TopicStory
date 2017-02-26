@@ -8,6 +8,7 @@ import sys
 import re
 import robotparser as rp
 import numpy as np
+import random
 
 import util
 import decide
@@ -86,20 +87,28 @@ class Crawler:
         Returns None if no urls left to visit.
         Strategy is to visit anything not visited this crawl, with the following priority:
             1) base url
+            2) internal pages linked from the base url
             2) articles which haven't been visited yet, sorted by date
         Currently only implemented 1) and 2)
         '''
         base_url_string = self.base_url_string
 
-        # strategy 1 (visit base url if not visited yet)
+        # strategy 1 - visit base url if not visited yet (ignore previous crawls)
         base_url_id = queries.insert_url(conn, base_url_string)
         base_url = {'id': base_url_id, 'url': base_url_string}
         visited_base = decide.visited_base_url(conn, crawl_id)
         if not visited_base:
             return base_url
         
-        # strategy 2 (visit any articles not visited yet, starting with the most recent)
-        urls = decide.find_unvisited_internal_urls(conn, crawl_id, base_url_string)
+        # strategy 2 - visit any urls linked by the base url that haven't been visited yet (ignore previous crawls)
+        urls = decide.find_unvisited_links_from_base(conn, crawl_id, base_url_string)
+        urls = filter(lambda url: self.robot_parser.can_fetch("*", url['url']), urls)
+        if len(urls) > 0:
+            visit_url = random.choice(urls)
+            return visit_url
+
+        # strategy 3 - visit any articles not visited yet (including previous crawls), starting with the most recent
+        urls = decide.find_unvisited_internal_urls(conn, base_url_string)
         urls = filter(lambda url: self.robot_parser.can_fetch("*", url['url']), urls)
         urls = filter(lambda url: self.is_article(url['url']), urls)
         if len(urls) > 0:
