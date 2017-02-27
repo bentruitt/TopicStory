@@ -17,6 +17,10 @@ class TheGuardianCrawler(Crawler):
         time.sleep(1)
     
     def is_article(self, url):
+        if re.search(r'/all$', url):
+            return False
+        if re.search(r'/altdate'):
+            return False
         article_regex = r'(?<!/live)(?<!/video)/[0-9]{4,4}/[a-z]{3,3}/[0-9]{1,2}' # this one was annoying to get rid of videos/lives
         return bool(re.search(article_regex, url))
 
