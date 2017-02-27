@@ -5,6 +5,7 @@ keras
 newspaper
 nltk
 numpy
+matplotlib
 pandas
 pillow
 psutil
