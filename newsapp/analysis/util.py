@@ -2,7 +2,14 @@ import pandas as pd
 import psycopg2.extras
 
 def load_articles(conn, start_date, end_date):
-    # cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    '''
+    Inputs:
+        conn - database connection
+        start_date - datetime.date
+        end_date - datetime.date
+    Loads articles in the database between two datetimes, inclusive.
+    Returns result as a dataframe with five columns: url, title, text, date, and source.
+    '''
     cursor = conn.cursor()
     q = '''
         SELECT urls.url AS url, title, text, date, sources.name AS source
