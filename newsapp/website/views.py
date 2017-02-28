@@ -4,9 +4,6 @@ import datetime
 
 from database import get_db
 import models
-import analysis.nlp as nlp
-import analysis.entailment.predict_news_entailment as predict
-import analysis.topic_modeling.topic_modeling as topic_modeling
 
 @app.route('/')
 def index():
@@ -90,53 +87,16 @@ def articles_by_source_and_date(source_name, publish_date):
             articles=article_infos
     )
 
-@app.route('/clustering', methods=['GET'])
-def clustering():
-    if request.args.get('publish_date'):
-        try:
-            publish_date = datetime.datetime.strptime(request.args.get('publish_date'), '%Y-%m-%d').date()
-        except ValueError:
-            return abort(404)
-    else:
-        publish_date = datetime.datetime.strptime('2017-01-20', '%Y-%m-%d').date()
-    if request.args.get('threshold'):
-        try:
-            threshold = float(request.args.get('threshold'))
-        except ValueError:
-            return abort(404)
-    else:
-        threshold = 0.18
-
-    from_table = 'spacy_text_vectors'
-    from_field = 'spacy_text_vector'
-
-    conn = get_db()
-    article_clusters = nlp.compute_clusters_by_date(conn, publish_date=publish_date, threshold=threshold, from_table=from_table, from_field=from_field)
-    return render_template('clustering.html', publish_date=publish_date, threshold=threshold, article_clusters=article_clusters)
-
 @app.route('/topics', methods=['GET'])
 def topics():
-    if request.args.get('publish_date'):
-        try:
-            publish_date = datetime.datetime.strptime(request.args.get('publish_date'), '%Y-%m-%d').date()
-        except ValueError:
-            return abort(404)
-    else:
-        publish_date = datetime.datetime.strptime('2017-01-20', '%Y-%m-%d').date()
-    conn = get_db()
-    topics = topic_modeling.find_topics(conn, publish_date)
-    return render_template('topics.html', publish_date=publish_date, topics=topics)
-
-@app.route('/disagreements', methods=['GET'])
-def disagreements():
-    if request.args.get('publish_date'):
-        try:
-            publish_date = datetime.datetime.strptime(request.args.get('publish_date'), '%Y-%m-%d').date()
-        except ValueError:
-            return abort(404)
-    else:
-        publish_date = datetime.datetime.strptime('2017-02-22', '%Y-%m-%d').date()
-
-    conn = get_db()
-    disagreements = predict.find_disagreements(conn, publish_date)
-    return render_template('disagreements.html', disagreements=disagreements, publish_date=publish_date)
+    # if request.args.get('publish_date'):
+    #     try:
+    #         publish_date = datetime.datetime.strptime(request.args.get('publish_date'), '%Y-%m-%d').date()
+    #     except ValueError:
+    #         return abort(404)
+    # else:
+    #     publish_date = datetime.datetime.strptime('2017-01-20', '%Y-%m-%d').date()
+    # conn = get_db()
+    # topics = topic_modeling.find_topics(conn, publish_date)
+    # return render_template('topics.html', publish_date=publish_date, topics=topics)
+    return render_template('topics.html')
