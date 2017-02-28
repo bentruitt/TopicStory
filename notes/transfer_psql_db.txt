@@ -1,5 +1,6 @@
 To transfer PSQL data, for example from AWS to a local machine, there's two steps.
 First, dump the DB to a file:
+(on AWS)
 $ pg_dump news > news.db
 Second, scp the file over:
 $ scp NewsApp:/home/ubuntu/news.db ./news.db
