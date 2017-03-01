@@ -2,7 +2,9 @@
 <html>
 
 <head>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+{% block links %}
+{% endblock %}
 <title>
   {% block title %}
   News Analyzer

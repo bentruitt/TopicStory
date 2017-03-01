@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}
+News Analyzer
+{% endblock %}
+
+{% block header %}
+{{ x }}
+{% endblock %}
+
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='d3.css') }}">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+{% endblock %}
+
+{% block content %}
+This will be my D3 scratch page.
+<br><br>
+
+This is a chart!
+<div class="chart">
+  <div style="width: 40px;">4</div>
+  <div style="width: 80px;">8</div>
+  <div style="width: 150px;">15</div>
+  <div style="width: 160px;">16</div>
+  <div style="width: 230px;">23</div>
+  <div style="width: 420px;">42</div>
+</div>
+<br><br>
+
+This chart pulls data from the server!
+<div class="chart">
+    {% for d in data %}
+    <div style="width: {{d}}px;">{{d}}</div>
+    {% endfor %}
+</div>
+<br><br>
+
+This chart uses d3!
+<div class="chart ex1">
+</div>
+<script type="text/javascript">
+var data = [4, 8, 15, 16, 23, 42];
+d3.select(".ex1")
+    .selectAll("div")
+    .data(data)
+    .enter()
+        .append("div")
+        .style("width", function(d) { return d * 10 + "px"; })
+        .text(function(d) { return d; });
+</script>
+<br><br>
+
+This chart uses d3 and data from the server!
+<div class="chart ex2">
+</div>
+<script type="text/javascript">
+var data = {{ data|tojson }};
+d3.select(".ex2")
+    .selectAll("div")
+    .data(data)
+    .enter()
+        .append("div")
+        .style("width", function(d) { return d*10 + "px"; })
+        .text(function(d) { return d; });
+</script>
+<br><br>
+
+This chart uses scaling in d3!
+<div class="chart ex3">
+</div>
+<script type="text/javascript">
+var data = {{ data|tojson }};
+var scale = d3.scale.linear()
+    .domain([0, d3.max(data)])
+    .range([0, 500]);
+d3.select(".ex3")
+    .selectAll("div")
+        .data(data)
+    .enter().append("div")
+        .style("width", function(d) { return scale(d) + "px" })
+        .text(function(d) { return d; });
+</script>
+<br><br>
+
+
+{% endblock %}

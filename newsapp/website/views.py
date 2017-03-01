@@ -100,3 +100,8 @@ def topics():
     # topics = topic_modeling.find_topics(conn, publish_date)
     # return render_template('topics.html', publish_date=publish_date, topics=topics)
     return render_template('topics.html')
+
+@app.route('/d3', methods=['GET'])
+def d3():
+    data = [3, 4, 17, 12, 5]
+    return render_template('d3.html', data=data, x="hello")
