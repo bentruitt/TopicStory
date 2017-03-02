@@ -2,16 +2,10 @@ import pandas as pd
 from flask import render_template, request, abort
 from website import app
 import datetime
-import bokeh.charts as bkp
-from bokeh.charts import Bar, show
-from bokeh.plotting import figure
-from bokeh.resources import CDN
-from bokeh.embed import file_html, components, autoload_static
-from bokeh.charts.attributes import CatAttr, cat
 
 from variables import get_db, get_model
 import models
-from analysis.util import load_articles
+from util import *
 
 @app.route('/')
 def index():
@@ -102,65 +96,22 @@ def topics():
     articles_by_topic = plot_articles_by_topic(publish_date)
     return render_template('topics.html', publish_date=publish_date, articles_by_source=articles_by_source, articles_by_topic=articles_by_topic)
 
-@app.route('/d3', methods=['GET'])
-def d3():
-    data = [3, 4, 17, 12, 5]
-    return render_template('d3.html', data=data, x="hello")
-
-def get_publish_date():
-    if request.args.get('publish_date'):
-        try:
-            publish_date = datetime.datetime.strptime(request.args.get('publish_date'), '%Y-%m-%d').date()
-        except ValueError:
-            publish_date = datetime.date.today()
-    else:
-        publish_date = datetime.date.today()
-    return publish_date
-
-def plot_articles_by_source(publish_date):
-    conn = get_db()
-    data = load_articles(conn, publish_date, publish_date)
-    source_counts = data.groupby('source')['text'].count().sort_values()
-    data = {}
-    data['source'] = source_counts.index.tolist()
-    data['articles'] = source_counts.values
-    bar = horizontal_bar_plot(source_counts, xlabel='number of articles')
-    script, div = components(bar)
-    plot = {}
-    plot['script'] = script
-    plot['div'] = div
-    return plot
-
-def plot_articles_by_topic(publish_date):
+@app.route('/view-all-topics', methods=['GET'])
+def view_all_topics():
     conn = get_db()
     model = get_model()
-    data = load_articles(conn, publish_date, publish_date)
-    articles = data['text']
-    topic_names, topic_counts = model.get_prevalent_topics(articles, num_topics=10, num_words=5)
-    s = pd.Series(topic_counts, index=topic_names)
-    s.sort_values(ascending=True, inplace=True)
-    bar = horizontal_bar_plot(s, xlabel='number of articles')
-    script, div = components(bar)
-    plot = {}
-    plot['script'] = script
-    plot['div'] = div
-    return plot
+    start_date = datetime.date(2017, 02, 20)
+    end_date = datetime.date(2017, 02, 26)
+    df = load_articles(conn, start_date, end_date)
+    articles = df['text']
+    topic_names, topic_counts = model.get_prevalent_topics(articles, num_topics=model.num_topics, num_words=20)
+    topics = list(enumerate(zip(topic_names, topic_counts)))
 
-def horizontal_bar_plot(series, xlabel=''):
-    p = figure(width=800, height=400, y_range=series.index.tolist())
-    p.background_fill = "#EAEAF2"
-    p.grid.grid_line_alpha=1.0
-    p.grid.grid_line_color = "white"
-    p.title.text = 'Articles by Source'
-    p.xaxis.axis_label = xlabel
-    p.xaxis.axis_label_text_font_style = 'normal'
-    p.xaxis.axis_label_text_font_size = '14pt'
-    p.xaxis.major_label_text_font_size = '14pt'
-    p.yaxis.major_label_text_font_size = '14pt'
-    p.yaxis.axis_label_text_font_size = '14pt'
-    j = 1
-    for k,v in series.iteritems():
-        p.rect(x=float(v)/2, y=j, width=abs(v), height=0.8,color=(76,114,176),
-            width_units="data", height_units="data")
-        j += 1
-    return p
+    total_articles_by_topic = plot_total_articles_by_topic()
+    return render_template('view_all_topics.html', total_articles_by_topic=total_articles_by_topic, topics=topics)
+
+@app.route('/view-single-topic', methods=['GET'])
+def view_single_topic():
+    topic = get_topic()
+    topic_popularity = plot_topic_popularity_over_time(topic)
+    return render_template('view_single_topic.html', topic=topic, topic_popularity=topic_popularity)

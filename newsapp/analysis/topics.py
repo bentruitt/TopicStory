@@ -128,6 +128,20 @@ class TopicPipeline:
         num_zero = np.count_nonzero(topic_counts==0)
         return num_zero
 
+    def count_topic(self, documents, topic):
+        '''
+        Input:
+            documents - list of strings
+            topic - integer
+        Output:
+            topic_count - integer
+        Counts the number of strings in documents which belong to topic number topic.
+        '''
+        topics = self.predict(documents)
+        topics = topics.argmax(axis=1)
+        topic_count = sum(topics==topic)
+        return topic_count
+
     def get_prevalent_topics(self, documents, num_topics, num_words):
         '''
         Input:
