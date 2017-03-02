@@ -34,45 +34,70 @@ def get_topic():
         topic = 0
     return topic
 
-def plot_topic_popularity_over_time(topic):
-    conn = get_db()
+def plot_total_topic_popularity():
+    num_topics_plot = 10
+    num_words_plot = 5
     model = get_model()
+    article_counts = model.articles.groupby('topic')['text'].count().sort_values()[::-1][:num_topics_plot][::-1]
+    article_names = [' '.join(model.get_topic_words(topic, num_words=num_words_plot)) for topic in article_counts.index]
+    article_counts.index = article_names
+    p = horizontal_bar_plot(article_counts)
 
-    start_date = datetime.date(2017, 02, 20)
-    end_date = datetime.date(2017, 02, 26)
-    dates = get_date_range(start_date, end_date)
-
-    df = load_articles(conn, start_date, end_date)
-    article_counts = [model.count_topic(df[df['date']==d]['text'], topic) for d in dates]
-    data = { 'date': map(str,dates), 'count': article_counts }
-    p = TimeSeries(
-            data,
-            x='date',
-            y='count',
-            title='Topic Popularity Over Time'
-    )
     script, div = components(p)
     plot = {}
     plot['script'] = script
     plot['div'] = div
     return plot
 
-def plot_total_articles_by_topic():
-    conn = get_db()
-    model = get_model()
-    start_date = datetime.date(2017, 02, 20)
-    end_date = datetime.date(2017, 02, 26)
-    df = load_articles(conn, start_date, end_date)
-    articles = df['text']
-    topic_names, topic_counts = model.get_prevalent_topics(articles, num_topics=10, num_words=5)
-    s = pd.Series(topic_counts, index=topic_names)
-    s.sort_values(ascending=True, inplace=True)
-    bar = horizontal_bar_plot(s, xlabel='number of articles')
-    script, div = components(bar)
-    plot = {}
-    plot['script'] = script
-    plot['div'] = div
-    return plot
+def plot_topic_popularity_over_time(topic):
+    articles = get_model()
+    articles[articles['topic']==topic].groupby('date').count()
+    pass
+
+def plot_topic_popularity_single_date(date):
+    articles = get_model()
+    articles[articles['date']==date].groupby('topic').count()
+    pass
+
+# def plot_topic_popularity_over_time(topic):
+#     conn = get_db()
+#     model = get_model()
+# 
+#     start_date = datetime.date(2017, 02, 20)
+#     end_date = datetime.date(2017, 02, 26)
+#     dates = get_date_range(start_date, end_date)
+# 
+#     df = load_articles(conn, start_date, end_date)
+#     article_counts = [model.count_topic(df[df['date']==d]['text'], topic) for d in dates]
+#     data = { 'date': map(str,dates), 'count': article_counts }
+#     p = TimeSeries(
+#             data,
+#             x='date',
+#             y='count',
+#             title='Topic Popularity Over Time'
+#     )
+#     script, div = components(p)
+#     plot = {}
+#     plot['script'] = script
+#     plot['div'] = div
+#     return plot
+
+# def plot_total_articles_by_topic():
+#     conn = get_db()
+#     model = get_model()
+#     start_date = datetime.date(2017, 02, 20)
+#     end_date = datetime.date(2017, 02, 26)
+#     df = load_articles(conn, start_date, end_date)
+#     articles = df['text']
+#     topic_names, topic_counts = model.get_prevalent_topics(articles, num_topics=10, num_words=5)
+#     s = pd.Series(topic_counts, index=topic_names)
+#     s.sort_values(ascending=True, inplace=True)
+#     bar = horizontal_bar_plot(s, xlabel='number of articles')
+#     script, div = components(bar)
+#     plot = {}
+#     plot['script'] = script
+#     plot['div'] = div
+#     return plot
 
 def plot_articles_by_source(publish_date):
     conn = get_db()

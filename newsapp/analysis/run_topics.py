@@ -1,6 +1,6 @@
 import datetime
-import cPickle as pickle
 import os
+import cPickle as pickle
 
 import topics
 import util
@@ -15,14 +15,18 @@ def run_topics(start_date=datetime.date(2017,02,20), end_date=datetime.date(2017
 
     conn = connect()
 
-    df = util.load_articles(conn, start_date, end_date)
-    articles = df['text']
-    topic_pipeline = topics.TopicPipeline(num_topics=num_topics, method='nmf')
-    topic_pipeline.fit(articles)
+    articles = util.load_articles(conn, start_date, end_date)
+    documents = articles['text']
+    topic_pipeline = topics.TopicPipeline(num_topics=num_topics)
+    topic_pipeline.fit(documents)
+
+    assigned_topics = topic_pipeline.topics.argmax(axis=1)
+    articles['topic'] = assigned_topics
+    topic_pipeline.articles = articles
 
     analysis_dir = os.path.dirname(os.path.realpath(__file__))
     filepath = os.path.join(analysis_dir, filename)
+
     with open(filepath, 'w') as f:
         pickle.dump(topic_pipeline, f)
-
     conn.close()

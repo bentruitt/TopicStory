@@ -98,17 +98,17 @@ def topics():
 
 @app.route('/view-all-topics', methods=['GET'])
 def view_all_topics():
-    conn = get_db()
     model = get_model()
+    articles = model.articles
     start_date = datetime.date(2017, 02, 20)
     end_date = datetime.date(2017, 02, 26)
-    df = load_articles(conn, start_date, end_date)
-    articles = df['text']
-    topic_names, topic_counts = model.get_prevalent_topics(articles, num_topics=model.num_topics, num_words=20)
-    topics = list(enumerate(zip(topic_names, topic_counts)))
+    articles = articles['text']
+    # topic_names, topic_counts = model.get_prevalent_topics(articles, num_topics=model.num_topics, num_words=20)
+    # topics = list(enumerate(zip(topic_names, topic_counts)))
 
-    total_articles_by_topic = plot_total_articles_by_topic()
-    return render_template('view_all_topics.html', total_articles_by_topic=total_articles_by_topic, topics=topics)
+    total_articles_by_topic = plot_total_topic_popularity()
+    # return render_template('view_all_topics.html', total_articles_by_topic=total_articles_by_topic, topics=topics)
+    return render_template('view_all_topics.html', total_articles_by_topic=total_articles_by_topic)
 
 @app.route('/view-single-topic', methods=['GET'])
 def view_single_topic():
