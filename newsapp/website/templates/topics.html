@@ -29,13 +29,15 @@ To see a previous date, type a date into the form below.
 
 <h2>Articles by Source</h2>
 The plot below shows the number of articles from each source.
-{{ div|safe }}
-{{ script|safe }}
+{{ articles_by_source.div|safe }}
+{{ articles_by_source.script|safe }}
 <br>
 
 <h2>Articles by Topic</h2>
-The plot below shows the number of articles for each topic.
+The plot below shows the number of articles from each topic.
 Only the top ten topics are shown.
-
+{{ articles_by_topic.div|safe }}
+{{ articles_by_topic.script|safe }}
+<br>
 
 {% endblock %}

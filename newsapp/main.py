@@ -6,6 +6,7 @@ import crawler.crawler_nytimes as crawler_nytimes
 import crawler.crawler_theguardian as crawler_theguardian
 import crawler.crawler_npr as crawler_npr
 import crawler.crawler_cnn as crawler_cnn
+import analysis.run_topics as run_topics
 import website.test_server as test_server
 import website.deploy_server as deploy_server
 
@@ -16,6 +17,8 @@ if __name__ == '__main__':
     parser.add_argument('--crawl-theguardian', help='spawn a continuous crawler for The Guardian', action='store_true')
     parser.add_argument('--crawl-npr', help='spawn a continuous crawler for NPR', action='store_true')
     parser.add_argument('--crawl-cnn', help='spawn a continuous crawler for CNN', action='store_true')
+
+    parser.add_argument('--create-topics', help='run and pickle an NMF model', action='store_true')
 
     parser.add_argument('--test-server', help='run a local test server', action='store_true')
     parser.add_argument('--deploy-server', help='deploy the actual server', action='store_true')
@@ -35,6 +38,12 @@ if __name__ == '__main__':
 
     elif args.crawl_cnn:
         crawler_cnn.crawl()
+
+    
+    elif args.create_topics:
+        run_topics.run_topics()
+
+
 
     elif args.test_server:
         test_server.run()

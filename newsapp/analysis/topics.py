@@ -128,6 +128,25 @@ class TopicPipeline:
         num_zero = np.count_nonzero(topic_counts==0)
         return num_zero
 
+    def get_prevalent_topics(self, documents, num_topics, num_words):
+        '''
+        Input:
+            documents - list of strings
+            num_topics - number of topics to return
+            num_words - number of words to put in topic names
+        Output:
+            topic_names - list of strings
+            topic_counts - list of integers (number of articles for each topic)
+        '''
+        total_topics = self.num_topics
+        topics = self.predict(documents)
+        topics = topics.argmax(axis=1)
+        topic_counts = np.array([sum(topics==i) for i in range(num_topics)])
+        top_topics = topic_counts.argsort()[:-(num_topics+1):-1]
+        topic_names = [' '.join(self.get_topic_words(topic, num_words)) for topic in top_topics]
+        topic_counts = topic_counts[top_topics]
+        return topic_names, topic_counts
+
     def plot_prevalent_topics_by_avg(self, documents, num_plot_topics=10, num_words=7, title=''):
         '''
         Input: group element from groupby, int, int
