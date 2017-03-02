@@ -98,7 +98,6 @@ def articles_by_source_and_date(source_name, publish_date):
 @app.route('/topics', methods=['GET'])
 def topics():
     publish_date = get_publish_date()
-    publish_date = datetime.date(2017, 02, 27)
     articles_by_source = plot_articles_by_source(publish_date)
     articles_by_topic = plot_articles_by_topic(publish_date)
     return render_template('topics.html', publish_date=publish_date, articles_by_source=articles_by_source, articles_by_topic=articles_by_topic)
