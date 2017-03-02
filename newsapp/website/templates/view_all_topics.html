@@ -22,14 +22,16 @@ This page contains information for exploring all the topics found by the model.
 {{ total_articles_by_topic.div|safe }}
 {{ total_articles_by_topic.script|safe }}
 <br><br>
-{% for i, (topic_name, topic_count) in topics %}
-<b><a href="/view-single-topic?topic={{i}}">Topic {{i}}</a></b>
+{% for topic_ind, topic_count, topic_words in topics %}
+<b><a href="/view-single-topic?topic={{topic_ind}}">Topic {{topic_ind}}</a></b>
 <br>
 <b>Number of articles: {{ topic_count }}</b>
 <br>
 <b>Words: </b>
 <br>
-{{ topic_name }}
+{% for word in topic_words %}
+{{ word }} 
+{% endfor %}
 <br><br>
 {% endfor %}
 {% endblock %}

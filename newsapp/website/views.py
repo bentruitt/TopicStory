@@ -98,20 +98,28 @@ def topics():
 
 @app.route('/view-all-topics', methods=['GET'])
 def view_all_topics():
+    num_words = 20
     model = get_model()
-    articles = model.articles
-    start_date = datetime.date(2017, 02, 20)
-    end_date = datetime.date(2017, 02, 26)
-    articles = articles['text']
-    # topic_names, topic_counts = model.get_prevalent_topics(articles, num_topics=model.num_topics, num_words=20)
-    # topics = list(enumerate(zip(topic_names, topic_counts)))
+    topic_counts = model.articles.groupby('topic')['text'].count().sort_values(ascending=False)
+    topic_words = [model.get_topic_words(topic, num_words=num_words) for topic in topic_counts.index]
+    topic_inds = topic_counts.index
+    topics = zip(topic_inds, topic_counts, topic_words)
 
     total_articles_by_topic = plot_total_topic_popularity()
-    # return render_template('view_all_topics.html', total_articles_by_topic=total_articles_by_topic, topics=topics)
-    return render_template('view_all_topics.html', total_articles_by_topic=total_articles_by_topic)
+    return render_template('view_all_topics.html', total_articles_by_topic=total_articles_by_topic, topics=topics)
 
 @app.route('/view-single-topic', methods=['GET'])
 def view_single_topic():
+    num_words = 20
+    model = get_model()
     topic = get_topic()
     topic_popularity = plot_topic_popularity_over_time(topic)
-    return render_template('view_single_topic.html', topic=topic, topic_popularity=topic_popularity)
+    topic_words = model.get_topic_words(topic, num_words=num_words)
+    articles = model.articles
+    articles = articles[articles['topic']==topic]
+    articles = articles.sort_values(['date', 'source', 'title'])
+    articles.index = range(len(articles))
+    # each row is a dctionary with keys 'url', 'source', 'date', etc.
+    articles = articles.T.to_dict().values()
+    print articles
+    return render_template('view_single_topic.html', topic=topic, topic_words=topic_words, topic_popularity=topic_popularity, articles=articles)

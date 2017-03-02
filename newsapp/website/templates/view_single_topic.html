@@ -14,7 +14,7 @@ View Single topic
 {% endblock %}
 
 {% block header %}
-View Single Topic
+Viewing Topic {{ topic }}
 {% endblock %}
 
 {% block content %}
@@ -22,6 +22,30 @@ This page contains information for browsing a single topic.
 <br>
 Currently browsing topic {{ topic }}.
 <br>
+<b>Topic words:</b>
+{% for word in topic_words %}
+{{ word }}, 
+{% endfor %}
+<br>
+Topic popularity over time:
+<br>
 {{ topic_popularity.div|safe }}
 {{ topic_popularity.script|safe }}
+<br>
+Articles in this topic:
+<br>
+<table class="summary-table">
+<tr>
+    <td><b>Date</b></td>
+    <td><b>Source</b></td>
+    <td><b>Headline</b></td>
+</tr>
+{% for article in articles %}
+<tr>
+    <td>{{ article.date }}</td>
+    <td><a href="http://www.{{ article.url }}">{{ article.source }}</a></td>
+    <td>{{ article.title }}</td>
+</tr>
+{% endfor %}
+</table>
 {% endblock %}

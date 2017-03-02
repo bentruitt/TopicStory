@@ -50,83 +50,27 @@ def plot_total_topic_popularity():
     return plot
 
 def plot_topic_popularity_over_time(topic):
-    articles = get_model()
-    articles[articles['topic']==topic].groupby('date').count()
-    pass
+    model = get_model()
+    articles = model.articles
+    article_counts = articles[articles['topic']==topic].groupby('date')['text'].count().sort_index()
+    dates = article_counts.index
+    data = { 'date': map(str,dates), 'count': article_counts }
+    p = TimeSeries(
+            data,
+            x='date',
+            y='count',
+            title='Topic Popularity Over Time'
+    )
+    script, div = components(p)
+    plot = {}
+    plot['script'] = script
+    plot['div'] = div
+    return plot
 
 def plot_topic_popularity_single_date(date):
     articles = get_model()
     articles[articles['date']==date].groupby('topic').count()
     pass
-
-# def plot_topic_popularity_over_time(topic):
-#     conn = get_db()
-#     model = get_model()
-# 
-#     start_date = datetime.date(2017, 02, 20)
-#     end_date = datetime.date(2017, 02, 26)
-#     dates = get_date_range(start_date, end_date)
-# 
-#     df = load_articles(conn, start_date, end_date)
-#     article_counts = [model.count_topic(df[df['date']==d]['text'], topic) for d in dates]
-#     data = { 'date': map(str,dates), 'count': article_counts }
-#     p = TimeSeries(
-#             data,
-#             x='date',
-#             y='count',
-#             title='Topic Popularity Over Time'
-#     )
-#     script, div = components(p)
-#     plot = {}
-#     plot['script'] = script
-#     plot['div'] = div
-#     return plot
-
-# def plot_total_articles_by_topic():
-#     conn = get_db()
-#     model = get_model()
-#     start_date = datetime.date(2017, 02, 20)
-#     end_date = datetime.date(2017, 02, 26)
-#     df = load_articles(conn, start_date, end_date)
-#     articles = df['text']
-#     topic_names, topic_counts = model.get_prevalent_topics(articles, num_topics=10, num_words=5)
-#     s = pd.Series(topic_counts, index=topic_names)
-#     s.sort_values(ascending=True, inplace=True)
-#     bar = horizontal_bar_plot(s, xlabel='number of articles')
-#     script, div = components(bar)
-#     plot = {}
-#     plot['script'] = script
-#     plot['div'] = div
-#     return plot
-
-def plot_articles_by_source(publish_date):
-    conn = get_db()
-    data = load_articles(conn, publish_date, publish_date)
-    source_counts = data.groupby('source')['text'].count().sort_values()
-    data = {}
-    data['source'] = source_counts.index.tolist()
-    data['articles'] = source_counts.values
-    bar = horizontal_bar_plot(source_counts, xlabel='number of articles')
-    script, div = components(bar)
-    plot = {}
-    plot['script'] = script
-    plot['div'] = div
-    return plot
-
-def plot_articles_by_topic(publish_date):
-    conn = get_db()
-    model = get_model()
-    data = load_articles(conn, publish_date, publish_date)
-    articles = data['text']
-    topic_names, topic_counts = model.get_prevalent_topics(articles, num_topics=10, num_words=5)
-    s = pd.Series(topic_counts, index=topic_names)
-    s.sort_values(ascending=True, inplace=True)
-    bar = horizontal_bar_plot(s, xlabel='number of articles')
-    script, div = components(bar)
-    plot = {}
-    plot['script'] = script
-    plot['div'] = div
-    return plot
 
 def horizontal_bar_plot(series, xlabel=''):
     p = figure(width=800, height=400, y_range=series.index.tolist())
@@ -146,13 +90,3 @@ def horizontal_bar_plot(series, xlabel=''):
             width_units="data", height_units="data")
         j += 1
     return p
-
-def get_date_range(start_date, end_date):
-    '''
-    Returns a list of dates between start_date and end_date, inclusive.
-    '''
-    start_ind = start_date.toordinal()
-    end_ind = end_date.toordinal()
-    date_inds = range(start_ind, end_ind+1)
-    dates = [datetime.date.fromordinal(d) for d in date_inds]
-    return dates
