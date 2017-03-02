@@ -1,9 +1,16 @@
 from flask import render_template, request, abort
 from website import app
 import datetime
+import bokeh.charts as bkp
+from bokeh.charts import Bar, show
+from bokeh.plotting import figure
+from bokeh.resources import CDN
+from bokeh.embed import file_html, components, autoload_static
+from bokeh.charts.attributes import CatAttr, cat
 
 from database import get_db
 import models
+from analysis.util import load_articles
 
 @app.route('/')
 def index():
@@ -89,19 +96,52 @@ def articles_by_source_and_date(source_name, publish_date):
 
 @app.route('/topics', methods=['GET'])
 def topics():
-    # if request.args.get('publish_date'):
-    #     try:
-    #         publish_date = datetime.datetime.strptime(request.args.get('publish_date'), '%Y-%m-%d').date()
-    #     except ValueError:
-    #         return abort(404)
-    # else:
-    #     publish_date = datetime.datetime.strptime('2017-01-20', '%Y-%m-%d').date()
-    # conn = get_db()
-    # topics = topic_modeling.find_topics(conn, publish_date)
-    # return render_template('topics.html', publish_date=publish_date, topics=topics)
-    return render_template('topics.html')
+    if request.args.get('publish_date'):
+        try:
+            publish_date = datetime.datetime.strptime(request.args.get('publish_date'), '%Y-%m-%d').date()
+        except ValueError:
+            return abort(404)
+    else:
+        publish_date = datetime.date.today()
+    conn = get_db()
+    date = datetime.date(2017, 02, 27)
+    data = load_articles(conn, date, date)
+    source_counts = data.groupby('source')['text'].count().sort_values()
+    data = {}
+    data['source'] = source_counts.index.tolist()
+    data['articles'] = source_counts.values
+    # bar = bkp.Bar(data,
+    #         label=CatAttr(columns=['source'], sort=False),
+    #         values='articles',
+    #         title='Articles by Source on {}'.format(publish_date),
+    #         xlabel='',
+    #         ylabel='number of articles', legend=False
+    # )
+    bar = horizontal_bar_plot(source_counts, xlabel='number of articles')
+    script, div = components(bar)
+    return render_template('topics.html', publish_date=publish_date, script=script, div=div)
 
 @app.route('/d3', methods=['GET'])
 def d3():
     data = [3, 4, 17, 12, 5]
     return render_template('d3.html', data=data, x="hello")
+
+def horizontal_bar_plot(series, xlabel=''):
+    p = figure(width=800, height=400, y_range=series.index.tolist())
+    p.background_fill = "#EAEAF2"
+    p.grid.grid_line_alpha=1.0
+    p.grid.grid_line_color = "white"
+    p.title='Articles by Source'
+    p.xaxis.axis_label = xlabel
+    p.xaxis.axis_label_text_font_style = 'normal'
+    p.xaxis.axis_label_text_font_size = '14pt'
+    p.xaxis.major_label_text_font_size = '14pt'
+    p.yaxis.major_label_text_font_size = '14pt'
+    p.yaxis.axis_label_text_font_size = '14pt'
+    j = 1
+    for k,v in series.iteritems():
+        print k,v,j
+        p.rect(x=v/2, y=j, width=abs(v), height=0.8,color=(76,114,176),
+            width_units="data", height_units="data")
+        j += 1
+    return p

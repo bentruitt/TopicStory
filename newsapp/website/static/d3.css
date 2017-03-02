@@ -7,3 +7,13 @@
   color: white;
 }
 
+.chart-svg rect {
+  fill: steelblue;
+}
+
+.chart-svg text {
+  fill: white;
+  font: 10px sans-serif;
+  text-anchor: end;
+}
+

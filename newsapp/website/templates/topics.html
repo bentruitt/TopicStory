@@ -1,31 +1,41 @@
 {% extends "base.html" %}
 
 {% block title %}
-Topic Modeling
+Today's Topics
+{% endblock %}
+
+{% block links %}
+<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.css" type="text/css" />
+        
+<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.js"></script>
+<script type="text/javascript">
+    Bokeh.set_log_level("info");
+</script>
 {% endblock %}
 
 {% block header %}
-Topic Modeling
+Daily Topics {{ publish_date }} 
 {% endblock %}
 
 {% block content %}
+This page contains information about today's topics.
+<br>
+To see a previous date, type a date into the form below.
 <form action="/topics" method="GET">
-    Publish date (format yyyy-mm-dd): <input type="text" name="publish_date" value="{{ publish_date }}"><br>
+    Format yyyy-mm-dd: <input type="text" name="publish_date" value="{{ publish_date }}"><br>
     <input type="submit" value="submit">
 </form>
-{% for topic in topics %}
 <br>
-<b>
-    Topic:
-    {% for word in topic.words %}
-    {{ word }}
-    {% endfor %}
-    <br>
-</b>
-    {% for article in topic.articles %}
-    {{ article.title }}
-    <br>
-    {% endfor %}
-    <br>
-{% endfor %}
+
+<h2>Articles by Source</h2>
+The plot below shows the number of articles from each source.
+{{ div|safe }}
+{{ script|safe }}
+<br>
+
+<h2>Articles by Topic</h2>
+The plot below shows the number of articles for each topic.
+Only the top ten topics are shown.
+
+
 {% endblock %}
