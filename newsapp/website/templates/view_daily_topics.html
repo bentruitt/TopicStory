@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Today's Topics
+View Daily Topics
 {% endblock %}
 
 {% block links %}
@@ -14,30 +14,36 @@ Today's Topics
 {% endblock %}
 
 {% block header %}
-Daily Topics {{ publish_date }} 
+View Daily Topics
 {% endblock %}
 
 {% block content %}
 This page contains information about today's topics.
 <br>
 To see a previous date, type a date into the form below.
-<form action="/topics" method="GET">
+<form action="/view-daily-topics" method="GET">
     Format yyyy-mm-dd: <input type="text" name="publish_date" value="{{ publish_date }}"><br>
     <input type="submit" value="submit">
 </form>
-<br>
-
-<h2>Articles by Source</h2>
-The plot below shows the number of articles from each source.
-{{ articles_by_source.div|safe }}
-{{ articles_by_source.script|safe }}
-<br>
-
-<h2>Articles by Topic</h2>
-The plot below shows the number of articles from each topic.
-Only the top ten topics are shown.
-{{ articles_by_topic.div|safe }}
-{{ articles_by_topic.script|safe }}
-<br>
-
+<br><br>
+{{ articles_by_topic_over_represented.div|safe }}
+{{ articles_by_topic_over_represented.script|safe }}
+<br><br>
+{% for topic,articles in topics %}
+    <b>Topic {{topic}}</b>
+    <table class="summary-table">
+    <tr>
+        <td><b>Date</b></td>
+        <td><b>Source</b></td>
+        <td><b>Headline</b></td>
+    </tr>
+    {% for article in articles %}
+        <tr>
+            <td>{{ article.date }}</td>
+            <td><a href="//{{ article.url }}">{{ article.source }}</a></td>
+            <td>{{ article.title }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endfor %}
 {% endblock %}

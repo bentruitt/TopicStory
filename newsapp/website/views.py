@@ -89,13 +89,6 @@ def articles_by_source_and_date(source_name, publish_date):
             articles=article_infos
     )
 
-@app.route('/topics', methods=['GET'])
-def topics():
-    publish_date = get_publish_date()
-    articles_by_source = plot_articles_by_source(publish_date)
-    articles_by_topic = plot_articles_by_topic(publish_date)
-    return render_template('topics.html', publish_date=publish_date, articles_by_source=articles_by_source, articles_by_topic=articles_by_topic)
-
 @app.route('/view-all-topics', methods=['GET'])
 def view_all_topics():
     num_words = 20
@@ -105,8 +98,8 @@ def view_all_topics():
     topic_inds = topic_counts.index
     topics = zip(topic_inds, topic_counts, topic_words)
 
-    total_articles_by_topic = plot_total_topic_popularity()
-    return render_template('view_all_topics.html', total_articles_by_topic=total_articles_by_topic, topics=topics)
+    articles_by_topic = plot_topic_popularity()
+    return render_template('view_all_topics.html', articles_by_topic=articles_by_topic, topics=topics)
 
 @app.route('/view-single-topic', methods=['GET'])
 def view_single_topic():
@@ -121,5 +114,19 @@ def view_single_topic():
     articles.index = range(len(articles))
     # each row is a dctionary with keys 'url', 'source', 'date', etc.
     articles = articles.T.to_dict().values()
-    print articles
     return render_template('view_single_topic.html', topic=topic, topic_words=topic_words, topic_popularity=topic_popularity, articles=articles)
+
+@app.route('/view-daily-topics', methods=['GET'])
+def topics():
+    publish_date = get_publish_date()
+    articles_by_topic_over_represented = plot_topic_popularity(date=publish_date, method='over-represented')
+    topics = get_topic_popularity(publish_date, method='over-represented')
+    topics = topics.sort_values(ascending=False).index
+    articles = [get_articles(topic=topic, date=publish_date).T.to_dict().values() for topic in topics]
+    topics = zip(topics, articles)
+    return render_template(
+            'view_daily_topics.html',
+            topics = topics,
+            publish_date=publish_date,
+            articles_by_topic_over_represented=articles_by_topic_over_represented
+    )

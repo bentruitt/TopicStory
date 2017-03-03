@@ -19,8 +19,8 @@ View Topics
 
 {% block content %}
 This page contains information for exploring all the topics found by the model.
-{{ total_articles_by_topic.div|safe }}
-{{ total_articles_by_topic.script|safe }}
+{{ articles_by_topic.div|safe }}
+{{ articles_by_topic.script|safe }}
 <br><br>
 {% for topic_ind, topic_count, topic_words in topics %}
 <b><a href="/view-single-topic?topic={{topic_ind}}">Topic {{topic_ind}}</a></b>
