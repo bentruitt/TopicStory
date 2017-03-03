@@ -11,13 +11,15 @@ from variables import get_db, get_model
 from flask import request
 
 def get_publish_date():
+    model = get_model()
+    last_date = model.articles['date'].unique().max()
     if request.args.get('publish_date'):
         try:
             publish_date = datetime.datetime.strptime(request.args.get('publish_date'), '%Y-%m-%d').date()
         except ValueError:
-            publish_date = datetime.date.today()
+            publish_date = last_date
     else:
-        publish_date = datetime.date.today()
+        publish_date = last_date
     return publish_date
 
 def get_topic():

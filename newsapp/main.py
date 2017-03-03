@@ -18,7 +18,11 @@ if __name__ == '__main__':
     parser.add_argument('--crawl-npr', help='spawn a continuous crawler for NPR', action='store_true')
     parser.add_argument('--crawl-cnn', help='spawn a continuous crawler for CNN', action='store_true')
 
-    parser.add_argument('--create-topics', help='run and pickle an NMF model', action='store_true')
+    parser.add_argument('--run-model', help='run and pickle an NMF model', action='store_true')
+    parser.add_argument('--start-date', help='if running NMF, the start date to train the model')
+    parser.add_argument('--end-date', help='if running NMF, the end date to train the model')
+    parser.add_argument('--num-topics', help='if running NMF, the number of topics used in the model')
+    parser.add_argument('--filename', help='if running NMF, the name of the output file')
 
     parser.add_argument('--test-server', help='run a local test server', action='store_true')
     parser.add_argument('--deploy-server', help='deploy the actual server', action='store_true')
@@ -40,8 +44,17 @@ if __name__ == '__main__':
         crawler_cnn.crawl()
 
     
-    elif args.create_topics:
-        run_topics.run_topics()
+    elif args.run_model:
+        start_date = args.start_date
+        if start_date is not None:
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = args.end_date
+        if end_date is not None:
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+        num_topics = args.num_topics
+        if num_topics is not None:
+            num_topics = int(num_topics)
+        run_topics.run_topics(start_date=start_date, end_date=end_date, num_topics=num_topics)
 
 
 
