@@ -2,6 +2,7 @@ import pandas as pd
 from flask import render_template, request, abort
 from website import app
 import datetime
+import time
 
 from variables import get_db, get_model
 import models
@@ -93,7 +94,7 @@ def articles_by_source_and_date(source_name, publish_date):
 def view_all_topics():
     num_words = 20
     model = get_model()
-    topic_counts = model.articles.groupby('topic')['text'].count().sort_values(ascending=False)
+    topic_counts = model.articles.groupby('topic')['title'].count().sort_values(ascending=False)
     topic_words = [model.get_topic_words(topic, num_words=num_words) for topic in topic_counts.index]
     topic_inds = topic_counts.index
     topics = zip(topic_inds, topic_counts, topic_words)
@@ -103,27 +104,36 @@ def view_all_topics():
 
 @app.route('/view-single-topic', methods=['GET'])
 def view_single_topic():
+    start = time.time()
+    print 'start: {}'.format(time.time()-start)
     num_words = 20
     model = get_model()
+    print 'get_model: {}'.format(time.time()-start)
     topic = get_topic()
+    print 'get_topic: {}'.format(time.time()-start)
     topic_popularity = plot_topic_popularity_over_time(topic)
+    print 'topic_popularity: {}'.format(time.time()-start)
     topic_words = model.get_topic_words(topic, num_words=num_words)
+    print 'topic_words: {}'.format(time.time()-start)
     articles = model.articles
     articles = articles[articles['topic']==topic]
     articles = articles.sort_values(['date', 'source', 'title'])
     articles.index = range(len(articles))
     # each row is a dctionary with keys 'url', 'source', 'date', etc.
-    articles = articles.T.to_dict().values()
-    return render_template('view_single_topic.html', topic=topic, topic_words=topic_words, topic_popularity=topic_popularity, articles=articles)
+    articles_dates = [(d,articles[articles['date']==d].T.to_dict().values()) for d in articles['date'].unique()]
+    print 'article_dates: {}'.format(time.time()-start)
+    return render_template('view_single_topic.html', topic=topic, topic_words=topic_words, topic_popularity=topic_popularity, articles_dates=articles_dates)
 
 @app.route('/view-daily-topics', methods=['GET'])
 def topics():
+    model = get_model()
     publish_date = get_publish_date()
     articles_by_topic_over_represented = plot_topic_popularity(date=publish_date, method='over-represented')
     topics = get_topic_popularity(publish_date, method='over-represented')
     topics = topics.sort_values(ascending=False).index
     articles = [get_articles(topic=topic, date=publish_date).T.to_dict().values() for topic in topics]
-    topics = zip(topics, articles)
+    topic_words = [model.get_topic_words(t, num_words=10) for t in topics]
+    topics = zip(topics, articles, topic_words)
     return render_template(
             'view_daily_topics.html',
             topics = topics,

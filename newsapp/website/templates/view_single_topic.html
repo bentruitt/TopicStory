@@ -19,7 +19,13 @@ Viewing Topic {{ topic }}
 
 {% block content %}
 This page contains information for browsing a single topic.
-<br>
+<br><br>
+To view a different topic, type in a number between 0 and 99 in the box below.
+<form action="/view-single-topic" method="GET">
+    Topic: <input type="text" name="topic" value="{{ topic }}"><br>
+    <input type="submit" value="submit">
+</form>
+<br><br>
 Currently browsing topic {{ topic }}.
 <br>
 <b>Topic words:</b>
@@ -34,18 +40,20 @@ Topic popularity over time:
 <br>
 Articles in this topic:
 <br>
-<table class="summary-table">
-<tr>
-    <td><b>Date</b></td>
-    <td><b>Source</b></td>
-    <td><b>Headline</b></td>
-</tr>
-{% for article in articles %}
-<tr>
-    <td>{{ article.date }}</td>
-    <td><a href="//{{ article.url }}">{{ article.source }}</a></td>
-    <td>{{ article.title }}</td>
-</tr>
+{% for date,articles in articles_dates %}
+    <b>{{ date }}</b>
+    <table class="summary-table">
+    <tr>
+        <td><b>Source</b></td>
+        <td><b>Headline</b></td>
+    </tr>
+    {% for article in articles %}
+        <tr>
+            <td><a href="//{{ article.url }}">{{ article.source }}</a></td>
+            <td>{{ article.title }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    <br>
 {% endfor %}
-</table>
 {% endblock %}

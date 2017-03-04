@@ -29,14 +29,11 @@ To see a previous date, type a date into the form below.
 {{ articles_by_topic_over_represented.div|safe }}
 {{ articles_by_topic_over_represented.script|safe }}
 <br><br>
-{% for topic,articles in topics %}
-    <b>Topic {{topic}}</b>
+{% for topic,articles,words in topics %}
+    <b><a href="/view-single-topic?topic={{ topic }}">Topic {{topic}}</a></b>
+    <br>
+    {% for word in words %}{{word }} {% endfor %}
     <table class="summary-table">
-    <tr>
-        <td><b>Date</b></td>
-        <td><b>Source</b></td>
-        <td><b>Headline</b></td>
-    </tr>
     {% for article in articles %}
         <tr>
             <td>{{ article.date }}</td>
@@ -45,5 +42,6 @@ To see a previous date, type a date into the form below.
         </tr>
     {% endfor %}
     </table>
+    <br>
 {% endfor %}
 {% endblock %}

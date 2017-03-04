@@ -1,5 +1,6 @@
 import datetime
 import pandas as pd
+from bokeh.models import Range1d
 from bokeh.charts import TimeSeries
 from bokeh.plotting import figure
 from bokeh.resources import CDN
@@ -36,11 +37,23 @@ def get_topic():
         topic = 0
     return topic
 
-
 def plot_topic_popularity_over_time(topic):
+    '''
+    Plots the topic popularity as a function of time.
+    Values on the y-axis represent daily article counts for that topic.
+    Inputs:
+        topic - integer
+    Outputs:
+        plot dictionary with script and div elements
+    '''
     model = get_model()
     articles = model.articles
-    article_counts = articles[articles['topic']==topic].groupby('date')['text'].count().sort_index()
+    article_counts = articles[articles['topic']==topic].groupby('date')['title'].count().sort_index()
+    dates = articles['date'].unique()
+    missing_dates = set(dates) - set(article_counts.index)
+    for date in missing_dates:
+        article_counts[date] = 0
+    article_counts = article_counts.sort_index()
     dates = article_counts.index
     data = { 'date': map(str,dates), 'count': article_counts }
     p = TimeSeries(
@@ -49,6 +62,7 @@ def plot_topic_popularity_over_time(topic):
             y='count',
             title='Topic Popularity Over Time'
     )
+    p.y_range.start = 0
     script, div = components(p)
     plot = {}
     plot['script'] = script
@@ -101,13 +115,13 @@ def get_topic_popularity(date=None, method='total'):
 
     if date is not None:
         articles = articles[articles['date']==date]
-    article_counts = articles.groupby('topic')['text'].count().sort_index()
+    article_counts = articles.groupby('topic')['title'].count().sort_index()
 
     if method=='total':
         topic_popularity = article_counts
     elif method=='over-represented':
         num_dates = model.articles['date'].nunique()
-        article_counts_total = model.articles.groupby('topic')['text'].count().sort_index()
+        article_counts_total = model.articles.groupby('topic')['title'].count().sort_index()
         article_counts_avg = article_counts_total / num_dates
         topic_popularity = article_counts / article_counts_avg
         topic_popularity = topic_popularity.fillna(0)

@@ -26,7 +26,6 @@ class TopicPipeline:
 
     def __init__(self, num_topics=100):
         self.num_topics = num_topics
-        self.documents = None
         self.tfidf_model = None
         self.tfidf = None
         self.topic_model = None
@@ -50,7 +49,6 @@ class TopicPipeline:
         topic_model.fit(tfidf)
         topics = topic_model.transform(tfidf)
 
-        self.documents = documents
         self.tfidf_model = tfidf_model
         self.tfidf = tfidf
         self.topic_model = topic_model

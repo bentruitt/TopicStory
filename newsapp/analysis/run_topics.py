@@ -21,6 +21,7 @@ def run_topics(start_date=datetime.date(2017,02,20), end_date=datetime.date(2017
 
     assigned_topics = topic_pipeline.topics.argmax(axis=1)
     articles['topic'] = assigned_topics
+    articles = articles.drop(['text'], axis=1)
     topic_pipeline.articles = articles
 
     filename = 'model_{}_{}_{}.pkl'.format(start_date, end_date, num_topics)
