@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-View Topics
+View All Topics
 {% endblock %}
 
 {% block links %}
@@ -14,24 +14,27 @@ View Topics
 {% endblock %}
 
 {% block header %}
-View Topics
+View All Topics
 {% endblock %}
 
 {% block content %}
 This page contains information for exploring all the topics found by the model.
-{{ articles_by_topic.div|safe }}
-{{ articles_by_topic.script|safe }}
-<br><br>
-{% for topic_ind, topic_count, topic_words in topics %}
-<b><a href="/view-single-topic?topic={{topic_ind}}">Topic {{topic_ind}}</a></b>
+
+<!-- plot topics -->
+{{ plot_topics.div|safe }}
+{{ plot_topics.script|safe }}
+
+<!-- list topics -->
+{% for topic_ind, topic_count, topic_name in list_topics %}
+<b><a href="/view-single-topic?topic={{topic_ind}}">Topic {{ topic_ind }}</a></b>
 <br>
+
 <b>Number of articles: {{ topic_count }}</b>
 <br>
-<b>Words: </b>
+
+<b>Words: </b>{{ topic_name }}
 <br>
-{% for word in topic_words %}
-{{ word }} 
-{% endfor %}
-<br><br>
+
+<br>
 {% endfor %}
 {% endblock %}

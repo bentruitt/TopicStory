@@ -92,51 +92,65 @@ def articles_by_source_and_date(source_name, publish_date):
 
 @app.route('/view-all-topics', methods=['GET'])
 def view_all_topics():
-    num_words = 20
-    model = get_model()
-    topic_counts = model.articles.groupby('topic')['title'].count().sort_values(ascending=False)
-    topic_words = [model.get_topic_words(topic, num_words=num_words) for topic in topic_counts.index]
-    topic_inds = topic_counts.index
-    topics = zip(topic_inds, topic_counts, topic_words)
+    # total takes about 0.336 secs (much better! could still be improved)
+    conn = get_db()
+    articles, topic_words = load_nmf_data(conn)
 
-    articles_by_topic = plot_topic_popularity()
-    return render_template('view_all_topics.html', articles_by_topic=articles_by_topic, topics=topics)
+    topic_counts = get_all_topics_count(articles)
+
+    list_topic_counts = topic_counts
+    list_topic_inds = list_topic_counts.index.tolist()
+    list_topic_names = get_topic_names(list_topic_inds, topic_words, num_words=20)
+    list_topics = zip(list_topic_inds, list_topic_counts, list_topic_names)
+
+    plot_topic_counts = topic_counts[:10]
+    plot_topic_names = get_topic_names(plot_topic_counts.index, topic_words, num_words=5)
+    plot_topic_counts.index = plot_topic_names
+    plot_topics = horizontal_bar_plot(plot_topic_counts)
+
+    return render_template('view_all_topics.html', list_topics=list_topics, plot_topics=plot_topics)
 
 @app.route('/view-single-topic', methods=['GET'])
 def view_single_topic():
-    start = time.time()
-    print 'start: {}'.format(time.time()-start)
-    num_words = 20
-    model = get_model()
-    print 'get_model: {}'.format(time.time()-start)
+    conn = get_db()
     topic = get_topic()
-    print 'get_topic: {}'.format(time.time()-start)
-    topic_popularity = plot_topic_popularity_over_time(topic)
-    print 'topic_popularity: {}'.format(time.time()-start)
-    topic_words = model.get_topic_words(topic, num_words=num_words)
-    print 'topic_words: {}'.format(time.time()-start)
-    articles = model.articles
-    articles = articles[articles['topic']==topic]
-    articles = articles.sort_values(['date', 'source', 'title'])
-    articles.index = range(len(articles))
-    # each row is a dctionary with keys 'url', 'source', 'date', etc.
-    articles_dates = [(d,articles[articles['date']==d].T.to_dict().values()) for d in articles['date'].unique()]
-    print 'article_dates: {}'.format(time.time()-start)
-    return render_template('view_single_topic.html', topic=topic, topic_words=topic_words, topic_popularity=topic_popularity, articles_dates=articles_dates)
+    articles, topic_words = load_nmf_data(conn)
+
+    topic_counts = get_single_topic_count(articles, topic)
+
+    topic_name = get_topic_name(topic, topic_words, num_words=20)
+    
+    dates = topic_counts.index.tolist()
+    topic_articles = articles[articles['topic']==topic]
+    topic_articles = topic_articles.sort_values(['date', 'source', 'title'])
+    topic_articles.index = range(len(topic_articles))
+    topic_articles_by_date = [topic_articles[topic_articles['date']==d] for d in dates]
+    topic_articles_by_date = map(lambda df: df.T.to_dict().values(), topic_articles_by_date)
+    dates_articles = zip(dates, topic_articles_by_date)
+
+    plot_time = time_series_plot(topic_counts.index.tolist(), topic_counts.values)
+
+    return render_template('view_single_topic.html', topic=topic, topic_name=topic_name, dates_articles=dates_articles, plot_time=plot_time)
 
 @app.route('/view-daily-topics', methods=['GET'])
 def topics():
-    model = get_model()
-    publish_date = get_publish_date()
-    articles_by_topic_over_represented = plot_topic_popularity(date=publish_date, method='over-represented')
-    topics = get_topic_popularity(publish_date, method='over-represented')
-    topics = topics.sort_values(ascending=False).index
-    articles = [get_articles(topic=topic, date=publish_date).T.to_dict().values() for topic in topics]
-    topic_words = [model.get_topic_words(t, num_words=10) for t in topics]
-    topics = zip(topics, articles, topic_words)
-    return render_template(
-            'view_daily_topics.html',
-            topics = topics,
-            publish_date=publish_date,
-            articles_by_topic_over_represented=articles_by_topic_over_represented
-    )
+    conn = get_db()
+    articles, topic_words = load_nmf_data(conn)
+    date = get_date(articles)
+
+    topic_popularities = get_daily_topics_popularity(articles, date)
+
+    topics = topic_popularities.index.tolist()
+    date_articles = articles[articles['date']==date]
+    date_articles = date_articles.sort_values(['source', 'title'])
+    date_articles.index = range(len(date_articles))
+    date_articles_by_topic = [date_articles[date_articles['topic']==t] for t in topics]
+    date_articles_by_topic = map(lambda df: df.T.to_dict().values(), date_articles_by_topic)
+    topics_articles = zip(topics, date_articles_by_topic)
+
+    plot_topic_popularities = topic_popularities[:10]
+    plot_topic_names = get_topic_names(plot_topic_popularities.index, topic_words, num_words=5)
+    plot_topic_popularities.index = plot_topic_names
+    plot_topics = horizontal_bar_plot(plot_topic_popularities)
+
+    return render_template('view_daily_topics.html', date=date, topics_articles=topics_articles, plot_topics=plot_topics)

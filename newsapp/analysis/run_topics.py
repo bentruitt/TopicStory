@@ -14,21 +14,76 @@ def run_topics(start_date=datetime.date(2017,02,20), end_date=datetime.date(2017
 
     conn = connect()
 
-    articles = util.load_articles(conn, start_date, end_date)
-    documents = articles['text']
-    topic_pipeline = topics.TopicPipeline(num_topics=num_topics)
-    topic_pipeline.fit(documents)
+    # articles = util.load_articles(conn, start_date, end_date)
+    # documents = articles['text']
+    # topic_pipeline = topics.TopicPipeline(num_topics=num_topics)
+    # topic_pipeline.fit(documents)
 
-    assigned_topics = topic_pipeline.topics.argmax(axis=1)
-    articles['topic'] = assigned_topics
-    articles = articles.drop(['text'], axis=1)
-    topic_pipeline.articles = articles
+    # assigned_topics = topic_pipeline.topics.argmax(axis=1)
+    # articles['topic'] = assigned_topics
+    # articles = articles.drop(['text'], axis=1)
+    # topic_pipeline.articles = articles
+
 
     filename = 'model_{}_{}_{}.pkl'.format(start_date, end_date, num_topics)
     analysis_dir = os.path.dirname(os.path.realpath(__file__))
     models_dir = os.path.join(analysis_dir, 'models')
     filepath = os.path.join(models_dir, filename)
 
-    with open(filepath, 'w') as f:
-        pickle.dump(topic_pipeline, f)
+    # don't re-run model every time, takes too long.
+    # just focus on writing methods to store results.
+    with open(filepath, 'r') as f:
+        topic_pipeline = pickle.load(f)
+    articles = topic_pipeline.articles
+
+    # with open(filepath, 'w') as f:
+    #     pickle.dump(topic_pipeline, f)
+
+    store_nmf_results(conn, num_topics, start_date, end_date, articles, topic_pipeline)
+
     conn.close()
+
+def store_nmf_results(conn, num_topics, start_date, end_date, articles, topic_pipeline):
+    nmf_model_id = store_nmf_model(conn, num_topics, start_date, end_date)
+
+    for url,topic in zip(articles['url'], articles['topic']):
+        store_nmf_article_topics(conn, nmf_model_id, url, topic)
+
+    for topic in range(num_topics):
+        words = topic_pipeline.get_topic_words(topic, num_words=100)
+        store_nmf_topic_words(conn, nmf_model_id, topic, words)
+    print 'finished storing'
+
+def store_nmf_model(conn, num_topics, start_date, end_date):
+    cursor = conn.cursor()
+    q = '''
+        INSERT INTO nmf_models (num_topics,start_date,end_date)
+        VALUES (%s,%s,%s)
+        RETURNING id;
+        '''
+    cursor.execute(q, (num_topics,start_date,end_date))
+    nmf_model_id = cursor.fetchone()[0]
+    conn.commit()
+    return nmf_model_id
+
+def store_nmf_article_topics(conn, nmf_model, url, topic):
+    cursor = conn.cursor()
+    q = '''
+        INSERT INTO nmf_article_topics (nmf_model,article,topic)
+        VALUES (
+            %s,
+            (SELECT id FROM urls WHERE url=%s),
+            %s
+        );
+        '''
+    cursor.execute(q, (nmf_model, url, topic))
+    conn.commit()
+
+def store_nmf_topic_words(conn, nmf_model, topic, words):
+    cursor = conn.cursor()
+    q = '''
+        INSERT INTO nmf_topic_words (nmf_model,topic,words)
+        VALUES (%s,%s,%s)
+        '''
+    cursor.execute(q, (nmf_model, topic, words))
+    conn.commit()

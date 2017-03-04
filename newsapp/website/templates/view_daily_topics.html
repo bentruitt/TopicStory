@@ -18,30 +18,32 @@ View Daily Topics
 {% endblock %}
 
 {% block content %}
-This page contains information about today's topics.
+This page contains information about topics for a single date.
+
+<!-- plot topics -->
+{{ plot_topics.div|safe }}
+{{ plot_topics.script|safe }}
 <br>
-To see a previous date, type a date into the form below.
-<form action="/view-daily-topics" method="GET">
-    Format yyyy-mm-dd: <input type="text" name="publish_date" value="{{ publish_date }}"><br>
-    <input type="submit" value="submit">
-</form>
-<br><br>
-{{ articles_by_topic_over_represented.div|safe }}
-{{ articles_by_topic_over_represented.script|safe }}
-<br><br>
-{% for topic,articles,words in topics %}
-    <b><a href="/view-single-topic?topic={{ topic }}">Topic {{topic}}</a></b>
+
+<!-- list articles for this date, grouped by topics -->
+{% for topic, articles in topics_articles %}
+    <!-- print the topic -->
+    <b><a href="/view-single-topic?topic={{topic}}">Topic {{topic}}</a></b>
     <br>
-    {% for word in words %}{{word }} {% endfor %}
+
+    <!-- put articles in a table -->
     <table class="summary-table">
-    {% for article in articles %}
+        <!-- Articles -->
+        {% for article in articles %}
         <tr>
-            <td>{{ article.date }}</td>
-            <td><a href="//{{ article.url }}">{{ article.source }}</a></td>
-            <td>{{ article.title }}</td>
+            <td><a href="//{{article.url}}">{{article.source}}</a></td>
+            <td>{{article.title}}</td>
         </tr>
-    {% endfor %}
+        {% endfor %}
+
     </table>
     <br>
+
 {% endfor %}
+
 {% endblock %}

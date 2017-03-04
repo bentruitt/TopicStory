@@ -18,42 +18,39 @@ Viewing Topic {{ topic }}
 {% endblock %}
 
 {% block content %}
-This page contains information for browsing a single topic.
+<!-- topic name -->
+<b>Words: </b>{{ topic_name }}
 <br><br>
-To view a different topic, type in a number between 0 and 99 in the box below.
-<form action="/view-single-topic" method="GET">
-    Topic: <input type="text" name="topic" value="{{ topic }}"><br>
-    <input type="submit" value="submit">
-</form>
+
+<!-- plot time series -->
+{{ plot_time.div|safe }}
+{{ plot_time.script|safe }}
 <br><br>
-Currently browsing topic {{ topic }}.
-<br>
-<b>Topic words:</b>
-{% for word in topic_words %}
-{{ word }}, 
-{% endfor %}
-<br>
-Topic popularity over time:
-<br>
-{{ topic_popularity.div|safe }}
-{{ topic_popularity.script|safe }}
-<br>
-Articles in this topic:
-<br>
-{% for date,articles in articles_dates %}
-    <b>{{ date }}</b>
-    <table class="summary-table">
-    <tr>
-        <td><b>Source</b></td>
-        <td><b>Headline</b></td>
-    </tr>
-    {% for article in articles %}
-        <tr>
-            <td><a href="//{{ article.url }}">{{ article.source }}</a></td>
-            <td>{{ article.title }}</td>
-        </tr>
-    {% endfor %}
-    </table>
+
+<!-- list articles in this topic -->
+{% for date, articles in dates_articles %}
+    <!-- list the date -->
+    <b>{{date}}</b>
     <br>
+
+    <!-- put articles in a table -->
+    <table class="summary-table">
+        <!-- Header -->
+        <tr>
+            <td><b>Source</b></td>
+            <td><b>Headline</b></td>
+        </tr>
+
+        <!-- Articles -->
+        {% for article in articles %}
+        <tr>
+            <td><a href="//{{article.url}}">{{article.source}}</a></td>
+            <td>{{article.title}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
 {% endfor %}
+
 {% endblock %}
