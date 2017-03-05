@@ -14,30 +14,15 @@ def run_topics(start_date=datetime.date(2017,02,20), end_date=datetime.date(2017
 
     conn = connect()
 
-    # articles = util.load_articles(conn, start_date, end_date)
-    # documents = articles['text']
-    # topic_pipeline = topics.TopicPipeline(num_topics=num_topics)
-    # topic_pipeline.fit(documents)
+    articles = util.load_articles(conn, start_date, end_date)
+    documents = articles['text']
+    topic_pipeline = topics.TopicPipeline(num_topics=num_topics)
+    topic_pipeline.fit(documents)
 
-    # assigned_topics = topic_pipeline.topics.argmax(axis=1)
-    # articles['topic'] = assigned_topics
-    # articles = articles.drop(['text'], axis=1)
-    # topic_pipeline.articles = articles
-
-
-    filename = 'model_{}_{}_{}.pkl'.format(start_date, end_date, num_topics)
-    analysis_dir = os.path.dirname(os.path.realpath(__file__))
-    models_dir = os.path.join(analysis_dir, 'models')
-    filepath = os.path.join(models_dir, filename)
-
-    # don't re-run model every time, takes too long.
-    # just focus on writing methods to store results.
-    with open(filepath, 'r') as f:
-        topic_pipeline = pickle.load(f)
-    articles = topic_pipeline.articles
-
-    # with open(filepath, 'w') as f:
-    #     pickle.dump(topic_pipeline, f)
+    assigned_topics = topic_pipeline.topics.argmax(axis=1)
+    articles['topic'] = assigned_topics
+    articles = articles.drop(['text'], axis=1)
+    topic_pipeline.articles = articles
 
     store_nmf_results(conn, num_topics, start_date, end_date, articles, topic_pipeline)
 
