@@ -11,8 +11,6 @@ from sklearn.decomposition import LatentDirichletAllocation, NMF
 from sklearn.metrics import silhouette_score
 from nltk.stem.snowball import EnglishStemmer
 
-plt.style.use('ggplot')
-
 class TopicPipeline:
     '''
     Class for running a topic modeling pipeline.
@@ -36,23 +34,45 @@ class TopicPipeline:
         Cleans the documents, creates a tf-idf matrix, and fits NMF.
         Stores all the resulting models as instance variables.
         '''
+        # documents = [self.clean_document(doc) for doc in documents]
+        print 'loading spacy'
+        nlp = spacy.load('en')
         print 'cleaning documents'
-        documents = [self.clean_document(doc) for doc in documents]
+        docs = []
+        for i,doc in enumerate(documents):
+            print i
+            clean_doc = self.clean_document(doc, nlp)
+            docs.append(clean_doc)
+        print 'deleting spacy'
+        del nlp
+        documents = docs
 
         print 'creating tfidf matrix'
         tfidf_model = TfidfVectorizer(max_features=5000)
         tfidf_model.fit(documents)
         tfidf = tfidf_model.transform(documents)
+        vocab = tfidf_model.get_feature_names()
 
         print 'fitting topics'
         topic_model = NMF(n_components=self.num_topics)
         topic_model.fit(tfidf)
         topics = topic_model.transform(tfidf)
+        components = topic_model.components_
 
-        self.tfidf_model = tfidf_model
+        # reorder most common topics first
+        assigned_topics = topics.argmax(axis=1)
+        topic_inds, topic_counts = np.unique(assigned_topics, return_counts=True)
+        new_topic_order = topic_inds[topic_counts.argsort()][::-1]
+        missing_topics = set(range(self.num_topics)) - set(new_topic_order)
+        new_topic_order = np.array(list(new_topic_order) + list(missing_topics))
+
+        topics = topics[:,new_topic_order]
+        components = components[new_topic_order,:]
+
         self.tfidf = tfidf
-        self.topic_model = topic_model
+        self.vocab = vocab
         self.topics = topics
+        self.components = components
 
     def get_topic_words(self, topic, num_words=10):
         '''
@@ -62,13 +82,14 @@ class TopicPipeline:
         Output:
             List of strings - the top words in this topic
         '''
-        vocab = self.tfidf_model.get_feature_names()
-        components = self.topic_model.components_
+        vocab = self.vocab
+        components = self.components
+        print topic
         topic_word_inds = components.argsort(axis=1)[topic,::-1]
         topic_words = [vocab[i] for i in topic_word_inds[:num_words]]
         return topic_words
 
-    def clean_document(self, document):
+    def clean_document(self, document, nlp):
         '''
         Input: String
         Output: String
@@ -86,15 +107,15 @@ class TopicPipeline:
         document = filter(lambda c: c in string.whitespace + string.letters, document)
         # lowercase
         document = document.lower()
+        # run spacy
+        words = nlp(document)
         # remove stop words
-        words = document.split()
-        words = filter(lambda w: w not in ENGLISH_STOP_WORDS, words)
-        # # run spacy
-        # words = nlp(document)
+        # words = document.split()
+        words = filter(lambda w: str(w) not in ENGLISH_STOP_WORDS, words)
         # # remove non-nouns
         # words = filter(lambda word: word.pos_ not in ['NOUN', 'PROPN'], words)
-        # # get lemma
-        # words = [word.lemma_ for word in words]
+        # get lemma
+        words = [word.lemma_ for word in words]
         # combine words back into a document
         words = filter(lambda w: w != u'', words)
         document = ' '.join(words)
