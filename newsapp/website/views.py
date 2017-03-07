@@ -141,12 +141,13 @@ def topics():
     topic_popularities = get_daily_topics_popularity(articles, date)
 
     topics = topic_popularities.index.tolist()
+    topic_names = [get_topic_name(t, topic_words, num_words=10) for t in topics]
     date_articles = articles[articles['date']==date]
     date_articles = date_articles.sort_values(['source', 'title'])
     date_articles.index = range(len(date_articles))
     date_articles_by_topic = [date_articles[date_articles['topic']==t] for t in topics]
     date_articles_by_topic = map(lambda df: df.T.to_dict().values(), date_articles_by_topic)
-    topics_articles = zip(topics, date_articles_by_topic)
+    topics_articles = zip(topics, topic_names, date_articles_by_topic)
 
     plot_topic_popularities = topic_popularities[:10]
     plot_topic_names = get_topic_names(plot_topic_popularities.index, topic_words, num_words=5)

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-View Daily Topics
+View Daily Topics - {{ date }}
 {% endblock %}
 
 {% block links %}
@@ -14,21 +14,31 @@ View Daily Topics
 {% endblock %}
 
 {% block header %}
-View Daily Topics
+View Daily Topics - {{ date }}
 {% endblock %}
 
 {% block content %}
 This page contains information about topics for a single date.
 
+<!-- form to change date -->
+<h3>Change Date</h3>
+<form action="/view-daily-topics" method="get">
+    Change date (format yyyy-mm-dd): <input type="text" name="date">
+    <input type="submit" value="submit">
+</form>
+
 <!-- plot topics -->
+<h3>Most Popular Topics</h3>
+Score is calculated using (num articles today) / (num articles on average) for each topic.
 {{ plot_topics.div|safe }}
 {{ plot_topics.script|safe }}
 <br>
 
 <!-- list articles for this date, grouped by topics -->
-{% for topic, articles in topics_articles %}
+<h3>Articles per topic on {{ date }}</h3>
+{% for topic, topic_name, articles in topics_articles %}
     <!-- print the topic -->
-    <b><a href="/view-single-topic?topic={{topic}}">Topic {{topic}}</a></b>
+    <b><a href="/view-single-topic?topic={{topic}}">Topic {{topic}}</a></b> - {{topic_name}}
     <br>
 
     <!-- put articles in a table -->

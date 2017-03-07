@@ -1,22 +1,30 @@
 {% extends "base.html" %}
 
 {% block title %}
-News Analyzer
+Topic Story
 {% endblock %}
 
 {% block header %}
-News Analyzer
+Topic Story
 {% endblock %}
 
 {% block content %}
 <p>
-Welcome to the News Analyzer!
-This is a news app dedicated to analyzing recent news articles.
-Not too much is completed yet, but hopefully the following features will be implemented soon:
-</p>
-<ul>
-  <li>Recent Articles, a page displaying a raw list of recent articles used in the current analysis</li>
-  <li>Topic Modeling, a page displaying major topics from recent news articles</li>
-  <li>Clustering, a page displaying clusters from recent articles</li>
-</ul>
+Welcome to Topic Story!
+This is a news app dedicated to topic modeling of recent news articles.
+<h2>What is Topic Modeling?</h2>
+Topic Modeling referes to a class of machine learning algorithms which try to associate text articles with hidden topics.
+In general, these topics are not known ahead of time, but rather are discovered by the machine learning algorithm.
+Most topic modeling algorithms try to find some underlying relation between documents and individual words.
+Two of the most common topic modeling algorithms are Non-Negative Matrix Factorization (NMF) and Latent Dirichlet Allocation (LDA).
+NMF is the algorithm used by Topic Story.
+<h2>Non-Negative Matrix Factorization</h2>
+In order to understand NMF, it is important to understand how machine learning algorithms process text.
+Many text-based algorithms require transforming documents into the matrix-based tf-idf, which stands for term-frequency inverse-document-frequency.
+A tf-idf matrix essentially counts how many times each word appears in each document, and is a numerical way of representing text.
+In a tf-idf matrix, each row represents a single document, while each column represents a single word.
+Each element of a tf-idf matrix represents how important that word is to that document.
+<br><br>
+Non-Negative Matrix Factorization attempts to factorize this matrix into two separate matrices, one which relates words to topics, and one which relates documents to topics.
+
 {% endblock %}

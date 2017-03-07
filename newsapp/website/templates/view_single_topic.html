@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-View Single topic
+View Single Topic - Topic {{ topic }}
 {% endblock %}
 
 {% block links %}
@@ -14,20 +14,34 @@ View Single topic
 {% endblock %}
 
 {% block header %}
-Viewing Topic {{ topic }}
+View Single Topic - Topic {{ topic }}
 {% endblock %}
 
 {% block content %}
+This information contains information for a single topic.
+
+<!-- form to change topic -->
+<h3>Change Topic</h3>
+<form action="/view-single-topic" method="get">
+    Change Topic (between 0 and 99): <input type="text" name="topic">
+    <input type="submit" value="submit">
+</form>
+
 <!-- topic name -->
-<b>Words: </b>{{ topic_name }}
+<h3>Top Words</h3>
+These are the top words for topic {{ topic }}:<br>
+{{ topic_name }}
 <br><br>
 
 <!-- plot time series -->
+<h3>Topic Popularity Over Time</h3>
+Number of articles for this topic as a function of time.
 {{ plot_time.div|safe }}
 {{ plot_time.script|safe }}
 <br><br>
 
 <!-- list articles in this topic -->
+<h3>Articles per date for topic {{ topic }}</h3>
 {% for date, articles in dates_articles %}
     <!-- list the date -->
     <b>{{date}}</b>
