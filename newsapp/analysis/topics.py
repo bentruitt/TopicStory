@@ -34,18 +34,18 @@ class TopicPipeline:
         Cleans the documents, creates a tf-idf matrix, and fits NMF.
         Stores all the resulting models as instance variables.
         '''
-        # documents = [self.clean_document(doc) for doc in documents]
-        print 'loading spacy'
-        nlp = spacy.load('en')
-        print 'cleaning documents'
-        docs = []
-        for i,doc in enumerate(documents):
-            print i
-            clean_doc = self.clean_document(doc, nlp)
-            docs.append(clean_doc)
-        print 'deleting spacy'
-        del nlp
-        documents = docs
+        documents = [self.clean_document(doc) for doc in documents]
+        # print 'loading spacy'
+        # nlp = spacy.load('en')
+        # print 'cleaning documents'
+        # docs = []
+        # for i,doc in enumerate(documents):
+        #     print i
+        #     clean_doc = self.clean_document(doc, nlp)
+        #     docs.append(clean_doc)
+        # print 'deleting spacy'
+        # del nlp
+        # documents = docs
 
         print 'creating tfidf matrix'
         tfidf_model = TfidfVectorizer(max_features=5000)
@@ -89,7 +89,7 @@ class TopicPipeline:
         topic_words = [vocab[i] for i in topic_word_inds[:num_words]]
         return topic_words
 
-    def clean_document(self, document, nlp):
+    def clean_document(self, document):
         '''
         Input: String
         Output: String
@@ -108,14 +108,14 @@ class TopicPipeline:
         # lowercase
         document = document.lower()
         # run spacy
-        words = nlp(document)
+        # words = nlp(document)
         # remove stop words
-        # words = document.split()
+        words = document.split()
         words = filter(lambda w: str(w) not in ENGLISH_STOP_WORDS, words)
         # # remove non-nouns
         # words = filter(lambda word: word.pos_ not in ['NOUN', 'PROPN'], words)
         # get lemma
-        words = [word.lemma_ for word in words]
+        # words = [word.lemma_ for word in words]
         # combine words back into a document
         words = filter(lambda w: w != u'', words)
         document = ' '.join(words)
