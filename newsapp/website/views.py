@@ -155,3 +155,7 @@ def topics():
     plot_topics = horizontal_bar_plot(plot_topic_popularities)
 
     return render_template('view_daily_topics.html', date=date, topics_articles=topics_articles, plot_topics=plot_topics)
+
+@app.route('/contact', methods=['GET'])
+def contact():
+    return render_template('contact.html')
