@@ -5,18 +5,15 @@ Pretty much everything taken from this tutorial here:
 created news.ini file
 ---------------------
 
-/home/scott/news/news.ini:
+/home/ubuntu/news-app/newsapp/news.ini
 
     [uwsgi]
     module = wsgi:app
-    
     master = true
     processes = 5
-    
     socket = news.sock
     chmod-socket = 660
     vacuum = true
-    
     die-on-term = true
 
 Things to note:
@@ -36,9 +33,9 @@ created systemd file
     [Service]
     User=scott
     Group=www-data
-    WorkingDirectory=/home/scott/news-app/src
-    Environment="PATH=/home/scott/news-app/venv/bin"
-    ExecStart=/home/scott/news-app/venv/bin/uwsgi --ini /home/scott/news-app/src/news.ini
+    WorkingDirectory=/home/ubuntu/news-app
+    Environment="PATH=/home/ubuntu/news-app/venv/bin"
+    ExecStart=/home/ubuntu/news-app/venv/bin/uwsgi --ini /home/ubuntu/news-app/newsapp/news.ini
     
     [Install]
     WantedBy=multi-user.target
@@ -55,11 +52,11 @@ created nginx file
 
     server {
       listen 80;
-      server_name 104.131.191.240;
+      server_name topicstory.com www.topicstory.com;
     
       location / {
         include uwsgi_params;
-        uwsgi_pass unix:/home/scott/news/news.sock;
+        uwsgi_pass unix:/home/ubuntu/news-app/newsapp/news.sock;
       }
     }
 
@@ -69,7 +66,16 @@ enabled nginx
 sudo ln -s /etc/nginx/sites-available/news /etc/nginx/sites-enabled
 sudo nginx -t
 sudo systemctl restart nginx
-sudo ufw allow 'Nginx Full
+sudo ufw allow 'Nginx Full'
+
+make sure AWS allows port 80
+----------------------------
+  - go to EC2 dashboard
+  - click instances
+  - click "lauch-wizard-3" or other link under "security groups"
+  - click "inbound"
+  - click "edit"
+  - add type=http, port=80, source=0.0.0.0/0
 
 restarting the server
 ---------------------
