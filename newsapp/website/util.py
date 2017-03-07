@@ -274,7 +274,6 @@ def horizontal_bar_plot(series, xlabel=''):
     p.background_fill = "#EAEAF2"
     p.grid.grid_line_alpha=1.0
     p.grid.grid_line_color = "white"
-    p.title.text = 'Articles by Source'
     p.xaxis.axis_label = xlabel
     p.xaxis.axis_label_text_font_style = 'normal'
     p.xaxis.axis_label_text_font_size = '14pt'
