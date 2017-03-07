@@ -1,20 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}
-View Single Topic - Topic {{ topic }}
-{% endblock %}
-
-{% block links %}
-<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.css" type="text/css" />
-        
-<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.js"></script>
-<script type="text/javascript">
-    Bokeh.set_log_level("info");
-</script>
-{% endblock %}
+{%- block image -%}
+{{ url_for('static', filename='img/stock-ticker.jpg') }}
+{%- endblock -%}
 
 {% block header %}
-View Single Topic - Topic {{ topic }}
+View Single Topic
+{% endblock %}
+
+{% block subheader %}
+Viewing topic {{ topic }}
 {% endblock %}
 
 {% block content %}
@@ -58,7 +53,7 @@ Number of articles for this topic as a function of time.
         <!-- Articles -->
         {% for article in articles %}
         <tr>
-            <td><a href="//{{article.url}}">{{article.source}}</a></td>
+            <td><a class="table-link" href="//{{article.url}}">{{article.source}}</a></td>
             <td>{{article.title}}</td>
         </tr>
         {% endfor %}

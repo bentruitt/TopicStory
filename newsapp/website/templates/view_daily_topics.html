@@ -1,20 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}
-View Daily Topics - {{ date }}
-{% endblock %}
-
-{% block links %}
-<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.css" type="text/css" />
-        
-<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.js"></script>
-<script type="text/javascript">
-    Bokeh.set_log_level("info");
-</script>
-{% endblock %}
+{%- block image -%}
+{{ url_for('static', filename='img/globe.jpg') }}
+{%- endblock -%}
 
 {% block header %}
-View Daily Topics - {{ date }}
+Daily Topics
+{% endblock %}
+
+{% block subheader %}
+View topics from {{ date }}
 {% endblock %}
 
 {% block content %}
@@ -38,7 +33,7 @@ Score is calculated using (num articles today) / (num articles on average) for e
 <h3>Articles per topic on {{ date }}</h3>
 {% for topic, topic_name, articles in topics_articles %}
     <!-- print the topic -->
-    <b><a href="/view-single-topic?topic={{topic}}">Topic {{topic}}</a></b> - {{topic_name}}
+    <b><a class="table-link" href="/view-single-topic?topic={{topic}}">Topic {{topic}}</a></b> - {{topic_name}}
     <br>
 
     <!-- put articles in a table -->
@@ -46,7 +41,7 @@ Score is calculated using (num articles today) / (num articles on average) for e
         <!-- Articles -->
         {% for article in articles %}
         <tr>
-            <td><a href="//{{article.url}}">{{article.source}}</a></td>
+            <td><a class="table-link" href="//{{article.url}}">{{article.source}}</a></td>
             <td>{{article.title}}</td>
         </tr>
         {% endfor %}

@@ -4,8 +4,16 @@
 Topic Story
 {% endblock %}
 
+{% block image -%}
+{{ url_for('static', filename='img/usa-from-space-cropped.jpg') }}
+{%- endblock %}
+
 {% block header %}
 Topic Story
+{% endblock %}
+
+{% block subheader %}
+A news app for exploring topics in the news
 {% endblock %}
 
 {% block content %}

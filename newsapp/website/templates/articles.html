@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}
-Recent Articles
-{% endblock %}
+{%- block image -%}
+{{ url_for('static', filename='img/ark-covenant.jpg') }}
+{%- endblock -%}
 
 {% block header %}
 Recent Articles
+{% endblock %}
+
+{% block subheader %}
+View articles in the database
 {% endblock %}
 
 {% block content %}
@@ -25,7 +29,7 @@ This page provides an overview of all the articles in the database.
     </tr>
     {% for source in num_articles_by_source %}
     <tr>
-        <td><a href="/articles/source={{ source.source_name }}">{{ source.source_name }}</a></td>
+        <td><a class="table-link" href="/articles/source={{ source.source_name }}">{{ source.source_name }}</a></td>
         <td>{{ source.num_articles }}</td>
     </tr>
     {% endfor %}
@@ -41,7 +45,7 @@ This page provides an overview of all the articles in the database.
     </tr>
     {% for date in num_articles_by_date %}
     <tr>
-        <td><a href="/articles/date={{ date.publish_date }}">{{ date.publish_date }}</td>
+        <td><a class="table-link" href="/articles/date={{ date.publish_date }}">{{ date.publish_date }}</td>
         <td>{{ date.num_articles }}</td>
     </tr>
     {% endfor %}

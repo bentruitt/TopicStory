@@ -1,14 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}
-Contact
-{% endblock %}
+{%- block image -%}
+{{ url_for('static', filename='img/flatirons2.jpg') }}
+{%- endblock -%}
 
 {% block header %}
-Contact
+Scott Sullivan
+{% endblock %}
+
+{% block subheader %}
 {% endblock %}
 
 {% block content %}
+<img src="{{ url_for('static', filename='img/scott2.jpg') }}" width="250" height="250">
+<br><br>
 Hi! My name is Scott Sullivan, and I am the creator of TopicStory.
 I am a data scientist from Boulder, CO, and recently completed the Galvanize DSI program.
 If you have questions, feedback, or just want to reach me, please send me a message!
@@ -19,6 +24,6 @@ If you have questions, feedback, or just want to reach me, please send me a mess
 <br>
 <b>LinkedIn:</b> <a href="//linkedin.com/in/scottmsul">linkedin.com/in/scottmsul</a>
 <br>
-<b>TopicStory Source:</b> <a href="//github.com/scottmsul/News-App">github.com/scottmsul/News-App</a>
+<b>Source for this app:</b> <a href="//github.com/scottmsul/News-App">github.com/scottmsul/News-App</a>
 
 {% endblock %}

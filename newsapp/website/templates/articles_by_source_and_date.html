@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}
-Articles from {{ source }} on {{ date }}
-{% endblock %}
+{%- block image -%}
+{{ url_for('static', filename='img/ark-covenant.jpg') }}
+{%- endblock -%}
 
 {% block header %}
-Articles from {{ source }} on {{ date }}
+Articles by date and source
+{% endblock %}
+
+{% block subheader %}
+Source: {{ source }}, Date: {{ date }}
 {% endblock %}
 
 {% block content %}
@@ -21,7 +25,7 @@ Articles from {{ source }} on {{ date }}
     </tr>
     {% for article in articles %}
     <tr>
-        <td><a href="http://{{ article.url }}">{{ article.title }}</a></td>
+        <td><a class="table-link" href="http://{{ article.url }}">{{ article.title }}</a></td>
     </tr>
     {% endfor %}
 </table>

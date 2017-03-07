@@ -1,53 +1,12 @@
-body {
-  font-family: Helvetica;
-  margin-left: 8em;
-  margin-right: 8em;
-}
-
-.header {
-  font-size: 16pt;
-  padding: 0em;
-  margin: 0em;
-}
-
-.content {
-  background-color: #ffffff;
-}
-
-/* Navbar */
-
-/* Centers the navbar*/
-.nav-container { text-align: center; }
-.nav { display: inline-block; }
-
-/* Causes the navbar to be a horizontal list */
-.nav > ul > li { display: inline; }
-
-/* Eliminates default padding on the left side of the horizontal list */
-.nav > ul { padding-left: 0; }
-
-/* Gives the links some breathing room */
-.nav-item {
-  margin: 0em 1em 0em 1em;
-  padding: 0.5em 2em 0.5em 2em;
-}
-
-/* Makes the links look like buttons */
-.nav-item {
-  text-decoration: none;
-  background-color: hsl(204, 43%, 79%);
-  color: #333333;
-  border-radius: 3px;
-}
-.nav-item:hover {
-  background-color: hsl(204, 43%, 50%);
-}
-
 .summary-table, th, td {
   border: 0px solid black;
   border-collapse: collapse;
 }
 
 .summary-table, td {
-  padding:0 15px 0 15px;
+  padding:5px 15px 5px 15px;
+}
+
+.table-link {
+  text-decoration: underline;
 }
