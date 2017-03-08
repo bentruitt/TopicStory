@@ -12,18 +12,21 @@ Scott Sullivan
 {% endblock %}
 
 {% block content %}
-<img src="{{ url_for('static', filename='img/scott2.jpg') }}" width="250" height="250">
-<br><br>
+<img class="contact-img" src="{{ url_for('static', filename='img/scott2.jpg') }}" width="250" height="250">
+<div class="contact-info">
+  <b>Email:</b> scottmsul at gmail.com
+  <br><br>
+  <b>Github:</b> <a href="//github.com/scottmsul">github.com/scottmsul</a>
+  <br><br>
+  <b>LinkedIn:</b> <a href="//linkedin.com/in/scottmsul">linkedin.com/in/scottmsul</a>
+  <br><br>
+  <b>Source code:</b> <a href="//github.com/scottmsul/News-App">github.com/scottmsul/News-App</a>
+</div>
+<p class="contact-description">
+<br>
 Hi! My name is Scott Sullivan, and I am the creator of TopicStory.
 I am a data scientist from Boulder, CO, and recently completed the Galvanize DSI program.
 If you have questions, feedback, or just want to reach me, please send me a message!
-<br><br>
-<b>Email:</b> scottmsul at gmail.com
-<br>
-<b>Github:</b> <a href="//github.com/scottmsul">github.com/scottmsul</a>
-<br>
-<b>LinkedIn:</b> <a href="//linkedin.com/in/scottmsul">linkedin.com/in/scottmsul</a>
-<br>
-<b>Source for this app:</b> <a href="//github.com/scottmsul/News-App">github.com/scottmsul/News-App</a>
+</p>
 
 {% endblock %}

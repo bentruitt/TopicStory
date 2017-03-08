@@ -10,3 +10,12 @@
 .table-link {
   text-decoration: underline;
 }
+
+.contact-img {
+  float: left;
+  margin-right: 25px;
+}
+
+.contact-description {
+  clear: both;
+}
