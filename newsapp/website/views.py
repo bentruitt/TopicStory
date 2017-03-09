@@ -133,7 +133,7 @@ def view_single_topic():
     return render_template('view_single_topic.html', topic=topic, topic_name=topic_name, dates_articles=dates_articles, plot_time=plot_time)
 
 @app.route('/view-daily-topics', methods=['GET'])
-def topics():
+def view_daily_topics():
     conn = get_db()
     articles, topic_words = load_nmf_data(conn)
     date = get_date(articles)
@@ -143,7 +143,7 @@ def topics():
     topics = topic_popularities.index.tolist()
     topic_names = [get_topic_name(t, topic_words, num_words=10) for t in topics]
     date_articles = articles[articles['date']==date]
-    date_articles = date_articles.sort_values(['source', 'title'])
+    date_articles = date_articles.sort_values(['topic', 'source', 'title'])
     date_articles.index = range(len(date_articles))
     date_articles_by_topic = [date_articles[date_articles['topic']==t] for t in topics]
     date_articles_by_topic = map(lambda df: df.T.to_dict().values(), date_articles_by_topic)
