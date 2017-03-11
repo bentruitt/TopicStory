@@ -269,18 +269,24 @@ def time_series_plot(dates, values, xlabel='', ylabel='', title=''):
     plot['div'] = div
     return plot
 
-def horizontal_bar_plot(series, xlabel=''):
+def horizontal_bar_plot(series, xlabel='', ylabel='', title=''):
     # plot from top to bottom
     series = series[::-1]
 
-    p = figure(width=800, height=400, y_range=series.index.tolist())
+    p = figure(
+            width=800,
+            height=400,
+            y_range=series.index.tolist(),
+            title=title
+    )
     p.background_fill = "#EAEAF2"
     p.grid.grid_line_alpha=1.0
     p.grid.grid_line_color = "white"
     p.xaxis.axis_label = xlabel
-    p.xaxis.axis_label_text_font_style = 'normal'
-    p.xaxis.axis_label_text_font_size = '14pt'
+    p.xaxis.axis_label_text_font_style = 'bold'
     p.xaxis.major_label_text_font_size = '14pt'
+    p.xaxis.axis_label_text_font_size = '10pt'
+    p.yaxis.axis_label = ylabel
     p.yaxis.major_label_text_font_size = '14pt'
     p.yaxis.axis_label_text_font_size = '14pt'
     j = 1

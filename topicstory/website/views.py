@@ -152,7 +152,7 @@ def view_daily_topics():
     plot_topic_popularities = topic_popularities[:10]
     plot_topic_names = get_topic_names(plot_topic_popularities.index, topic_words, num_words=5)
     plot_topic_popularities.index = plot_topic_names
-    plot_topics = horizontal_bar_plot(plot_topic_popularities)
+    plot_topics = horizontal_bar_plot(plot_topic_popularities, xlabel='Articles Today / Articles on Average', title='Topic Popularity')
 
     return render_template('view_daily_topics.html', date=date, topics_articles=topics_articles, plot_topics=plot_topics)
 
