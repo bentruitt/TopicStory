@@ -128,7 +128,7 @@ def view_single_topic():
     topic_articles_by_date = map(lambda df: df.T.to_dict().values(), topic_articles_by_date)
     dates_articles = zip(dates, topic_articles_by_date)
 
-    plot_time = time_series_plot(topic_counts.index.tolist(), topic_counts.values)
+    plot_time = time_series_plot(topic_counts.index.tolist(), topic_counts.values, xlabel='Date', ylabel='Number of Articles', title='Topic Popularity over Time')
 
     return render_template('view_single_topic.html', topic=topic, topic_name=topic_name, dates_articles=dates_articles, plot_time=plot_time)
 

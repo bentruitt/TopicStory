@@ -252,12 +252,15 @@ def get_articles(topic=None, date=None):
     articles.index = range(len(articles))
     return articles
 
-def time_series_plot(dates, values):
+def time_series_plot(dates, values, xlabel='', ylabel='', title=''):
     data = { 'dates': map(str,dates), 'values': values }
     p = TimeSeries(
             data,
             x='dates',
-            y='values'
+            y='values',
+            xlabel=xlabel,
+            ylabel=ylabel,
+            title=title
     )
     p.y_range.start = 0
     script, div = components(p)
