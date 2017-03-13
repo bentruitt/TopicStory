@@ -19,20 +19,50 @@ A news app for exploring topics in the news
 {% block content %}
 <p>
 Welcome to Topic Story!
-This is a news app dedicated to topic modeling of recent news articles.
-<h2>What is Topic Modeling?</h2>
-Topic Modeling referes to a class of machine learning algorithms which try to associate text articles with hidden topics.
-In general, these topics are not known ahead of time, but rather are discovered by the machine learning algorithm.
-Most topic modeling algorithms try to find some underlying relation between documents and individual words.
-Two of the most common topic modeling algorithms are Non-Negative Matrix Factorization (NMF) and Latent Dirichlet Allocation (LDA).
-NMF is the algorithm used by Topic Story.
-<h2>Non-Negative Matrix Factorization</h2>
-In order to understand NMF, it is important to understand how machine learning algorithms process text.
-Many text-based algorithms require transforming documents into the matrix-based tf-idf, which stands for term-frequency inverse-document-frequency.
-A tf-idf matrix essentially counts how many times each word appears in each document, and is a numerical way of representing text.
-In a tf-idf matrix, each row represents a single document, while each column represents a single word.
-Each element of a tf-idf matrix represents how important that word is to that document.
+This is a web app dedicated to live topic modeling of the news.
+<h2>What is topic modeling?</h2>
+Topic Modeling refers to a class of machine learning algorithms which inspect text documents to discover hidden topics.
+When looking for topics, the algorithm will search for groups of articles with similar words in common.
+For example, one topic might be about sports, one topic might be about politics, and so on.
+<h2>How can topic modeling help with browsing the news?</h2>
+Topic modeling can give an overview of recurring themes in the news, aggregated across several sources at once.
+Bigger topics will usually correspond to broad categories, while smaller topics will usually correspond to individual stories.
 <br><br>
-Non-Negative Matrix Factorization attempts to factorize this matrix into two separate matrices, one which relates words to topics, and one which relates documents to topics.
+By following a single topic, it is possible to stay up-to-date with all the articles matching a particular theme, as well as understanding how that theme trends over time.
+For example, the following topic is about the Oscar's:
+<br><br>
+<b>Words: </b>la oscars moonlight land best academy picture awards oscar kimmel beatty envelope award winner dunaway won actress stone warren ceremony 
+<br><br>
+<b>Popularity over time</b>
+
+{% include 'home_timeseries_plot.html' %}
+
+<b>Example Articles</b>
+
+{% include 'home_oscars_articles.html' %}
+
+<br>
+In addition to following a single topic, it is possible to see which topics are trending on any particular day.
+This can be useful to see when a story breaks out, or if several sources suddenly focus on a specific issue.
+For example, the following plot shows the top topics on 3/10/2017:
+
+{% include 'home_daily_plot.html' %}
+
+It turns out the first topic corresponds to a controversial story about the Marines sharing female nudes,
+while the second topic corresponds to stories about the impeachment of South Korean president Park Geun Hye, as well as national parks
+(these two themes were combined was because the word "park" was important to both).
+By inspecting each topic in depth, it is possible to understand the content of each topic and why it is trending.
+
+<h2>How does Topic Story use topic modeling?</h2>
+Under the hood, Topic Story utilizes an algorithm called Non-negative Matrix Factorization (NMF).
+In NMF, the articles are first represented as a matrix known as tf-idf, which stands for term-frequency inverse-document-frequency.
+In a tf-idf matrix, each row is a document, each column is a word, and each element represents a normalized frequency count of that word in that article.
+Next, the tf-idf matrix is factored into two matrices, the first relating documents to topics, and the second relating topics to words.
+<br><br>
+When Topic Story runs NMF, it does so once per day at midnight, using articles from the last two weeks.
+Topic Story uses one hundred topics, which is large enough to capture individual stories, but small enough to have very few empty topics.
+Unfortunately the topics change from one day to the next, so the topic labels are not stable over time.
+However, even if the labels change, the contents are usually stable between consecutive days.
+For example, if today the model discovered a topic about Syrian refugees, then tomorrow it will likely re-discover the same topic, even if the label is different.
 
 {% endblock %}
