@@ -34,18 +34,18 @@ class TopicPipeline:
         Cleans the documents, creates a tf-idf matrix, and fits NMF.
         Stores all the resulting models as instance variables.
         '''
-        # documents = [self.clean_document(doc) for doc in documents]
-        print 'loading spacy'
-        nlp = spacy.load('en')
-        print 'cleaning documents'
-        docs = []
-        for i,doc in enumerate(documents):
-            print i
-            clean_doc = self.clean_document(doc, nlp)
-            docs.append(clean_doc)
-        print 'deleting spacy'
-        del nlp
-        documents = docs
+        documents = [self.clean_document(doc) for doc in documents]
+        # print 'loading spacy'
+        # nlp = spacy.load('en')
+        # print 'cleaning documents'
+        # docs = []
+        # for i,doc in enumerate(documents):
+        #     print i
+        #     clean_doc = self.clean_document(doc, nlp)
+        #     docs.append(clean_doc)
+        # print 'deleting spacy'
+        # del nlp
+        # documents = docs
 
         print 'creating tfidf matrix'
         tfidf_model = TfidfVectorizer(max_features=5000)
@@ -89,33 +89,7 @@ class TopicPipeline:
         topic_words = [vocab[i] for i in topic_word_inds[:num_words]]
         return topic_words
 
-    def clean_document(self, document, nlp):
-        '''
-        Input: String
-        Output: String
-    
-        Cleans the input document. Includes:
-            -> converts to unicode
-            -> lowercase
-            -> remove non-letters
-            -> remove stop words
-            -> stemming
-        '''
-        document = document.decode('utf-8', 'ignore')
-        document = filter(lambda c: c in string.whitespace + string.letters, document)
-        document = document.lower()
-
-        parsed = nlp(document)
-        lemmas = [word.lemma_ for word in parsed]
-        document = ' '.join(lemmas)
-
-        words = document.split()
-        words = filter(lambda w: str(w) not in ENGLISH_STOP_WORDS, words)
-        words = filter(lambda w: w != u'', words)
-        document = ' '.join(words)
-        return document
-
-    # def clean_document(self, document):
+    # def clean_document(self, document, nlp):
     #     '''
     #     Input: String
     #     Output: String
@@ -130,8 +104,34 @@ class TopicPipeline:
     #     document = document.decode('utf-8', 'ignore')
     #     document = filter(lambda c: c in string.whitespace + string.letters, document)
     #     document = document.lower()
+
+    #     parsed = nlp(document)
+    #     lemmas = [word.lemma_ for word in parsed]
+    #     document = ' '.join(lemmas)
+
     #     words = document.split()
     #     words = filter(lambda w: str(w) not in ENGLISH_STOP_WORDS, words)
     #     words = filter(lambda w: w != u'', words)
     #     document = ' '.join(words)
     #     return document
+
+    def clean_document(self, document):
+        '''
+        Input: String
+        Output: String
+    
+        Cleans the input document. Includes:
+            -> converts to unicode
+            -> lowercase
+            -> remove non-letters
+            -> remove stop words
+            -> stemming
+        '''
+        document = document.decode('utf-8', 'ignore')
+        document = filter(lambda c: c in string.whitespace + string.letters, document)
+        document = document.lower()
+        words = document.split()
+        words = filter(lambda w: str(w) not in ENGLISH_STOP_WORDS, words)
+        words = filter(lambda w: w != u'', words)
+        document = ' '.join(words)
+        return document
