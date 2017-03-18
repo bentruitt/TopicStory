@@ -4,7 +4,7 @@ from os import path
 
 curr_dir = path.dirname(path.abspath(__file__))
 python_path = path.abspath(path.join(curr_dir, '..', 'venv', 'bin', 'python'))
-file_path = path.abspath(path.join(curr_dir, '..', 'newsapp', 'main.py'))
+file_path = path.abspath(path.join(curr_dir, '..', 'topicstory', 'main.py'))
 
 today = datetime.date.today()
 yesterday = datetime.date.fromordinal(today.toordinal()-1)
