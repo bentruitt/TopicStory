@@ -1,4 +1,4 @@
 *.swp
 *.pyc
 venv
-newsapp/conn.py
+topicstory/config.json

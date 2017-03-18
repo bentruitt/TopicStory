@@ -1,0 +1,72 @@
+I'm having trouble connecting from psycopg2, I have no idea what's wrong, going to uninstall/reinstall (I think I messed with the pg_hba.conf file).
+Notes taken from here: http://stackoverflow.com/questions/2748607/how-to-thoroughly-purge-and-reinstall-postgresql-on-ubuntu
+Steps:
+1) save database information (see notes/transfer-psql-db.txt)
+2) stop postgres from running (see here: http://askubuntu.com/questions/547434/how-to-nicely-stop-all-postgres-processes)
+    $ sudo pkill -u postgres
+3) check postgres is not running (following command should return no results)
+    $ ps -C postgres
+4) purge everything postgres:
+    $ sudo apt-get --purge remove postgresql\*
+5) remove any remaining postgres folders/users:
+    $ sudo rm -r /etc/postgresql/
+    $ sudo rm -r /etc/postgresql-common/
+    $ sudo rm -r /var/lib/postgresql/
+    $ sudo userdel -r postgres
+    $ sudo groupdel postgres
+
+Now that postgresql is uninstalled, install from scratch:
+Notes taken from here: https://help.ubuntu.com/community/PostgreSQL
+Use steps taken from "installation" and "alternative server setup"
+1) Install postgresql:
+    $ sudo apt-get install postgresql postgresql-contrib
+2) Test connection to server (should just connect without any password prompts):
+    $ sudo -u postgres psql postgres
+3) Create a postgres user with same name as unix user (makes it easy to login)
+    $ sudo -u postgres createuser --superuser $USER
+    $ sudo -u postgres psql
+    postgres=# \password {user} (for example, \password scott for local, \password ubuntu for aws, etc.)
+4) Create a database with same name as unix user (makes it easy to login)
+    $ sudo -u postgres createdb $USER
+5) Test logging into database:
+    $ psql
+    scott=# (or ubuntu=#)
+6) To create a database:
+    scott=# create database news;
+
+Now that postgresql is ready to use, get psycopg2 to use postgresql from python.
+Notes taken from here: https://www.fullstackpython.com/blog/postgresql-python-3-psycopg2-ubuntu-1604.html
+During Galvanize, Erich said to use os environment variables.
+However, environment variables don't get loaded during cron jobs, it's probably possible to set up, but I don't think it's worth the hassle.
+Instead use a json config file.
+1) Create json config file (put in same directory as conn.py in topicstory/topicstory):
+    $ vim config.json
+        {
+            "NEWS_DB_USER": "scott",
+            "NEWS_DB_HOST": "localhost",
+            "NEWS_DB_PASSWORD": "xxx (fill with actual password)",
+            "NEWS_DB_DATABASE": "news"
+        }
+2) add config file to .gitignore so nobody sees the secret keys/passwords:
+    $ vim .gitignore
+        topicstory/config.json
+3) use config file to get login credentials:
+    $ vim conn.py
+        import psycopg2
+        import json
+        import os
+        
+        def connect():
+            curr_path = os.path.dirname(os.path.abspath(__file__))
+            config_path = os.path.join(curr_path, 'config.json')
+            
+            with open(config_path) as f:
+                config = json.load(f)
+            
+            user = config['NEWS_DB_USER']
+            password = config['NEWS_DB_PASSWORD']
+            database = config['NEWS_DB_DATABASE']
+            host = config['NEWS_DB_HOST']
+        
+            conn = psycopg2.connect(user=user, password=password, database=database, host=host)
+            return conn
