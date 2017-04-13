@@ -125,7 +125,7 @@ class Crawler:
     def crawl(self):
         '''
         Not abstract. Begins a crawl.
-        Crawls forever, unless:
+        Crawls until MAX_VISITS is reached, unless:
             - self.decide_next_visit(conn) returns None
             - Five exceptions in a row
         '''
